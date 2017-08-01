@@ -1,0 +1,5 @@
+{
+    "require": {
+        "jlmsrl/ider-openid-client-php": "^1.0"
+    }
+}
