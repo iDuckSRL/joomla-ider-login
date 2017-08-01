@@ -39,20 +39,9 @@ class PlgSystemIDer_Login extends JPlugin
 	public function __construct(&$subject, $config)
 	{
 	    // construct the parent
-		parent::__construct($subject, $config);
+        parent::__construct($subject, $config);
         IDER_Server::instance();
 
-        /*
-        if(
-			!$this->params->get('ider_client_id', false)
-			||
-			!$this->params->get('ider_client_secret', false)
-			||
-			!$this->params->get('ider_scope_name', false)
-		){
-			return false;
-		}
-        */
 	}
 
 	public function onAfterRoute(){
