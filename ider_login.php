@@ -33,28 +33,29 @@ require_once 'includes/IDER_Server.php';
  */
 class PlgSystemIDer_Login extends JPlugin
 {
-	/**
-	 * Constructor.
-	 */
-	public function __construct(&$subject, $config)
-	{
-	    // construct the parent
+    /**
+     * Constructor.
+     */
+    public function __construct(&$subject, $config)
+    {
+        // construct the parent
         parent::__construct($subject, $config);
         IDER_Server::instance();
 
-	}
+    }
 
-	public function onAfterRoute(){
+    public function onAfterRoute()
+    {
 
-	    // Hack router
-	    $uri = JUri::getInstance();
+        // Hack router
+        $uri = JUri::getInstance();
 
-	    // I check if the user is not logged in
+        // I check if the user is not logged in
         $user = JFactory::getUser();
 
-        if($user->isGuest()) {
+        if ($user->isGuest) {
 
-            if(preg_match('/\/(?:iderbutton|idercallback)(?!.)/', $uri->getPath())) {
+            if (preg_match('/\/(?:iderbutton|idercallback)(?!.)/', $uri->getPath())) {
 
                 IDER_Server::IDerOpenIdClientHandler();
 
@@ -64,12 +65,13 @@ class PlgSystemIDer_Login extends JPlugin
 
     }
 
-	/*
-	 * I add the button for IDer login
-	 */
-	public function onBeforeRender(){
+    /*
+     * I add the button for IDer login
+     */
+    public function onBeforeRender()
+    {
 
-        if(JFactory::getApplication()->isSite()){
+        if (JFactory::getApplication()->isSite()) {
             $doc = JFactory::getApplication()->getDocument();
             ob_start();
 
@@ -81,12 +83,12 @@ class PlgSystemIDer_Login extends JPlugin
             ?><a href="/iderbutton"><button type="button" class="btn btn-danger ider-login-button">Login with IDer</button></a><?php
             $html = ob_get_contents();
             ob_end_clean();
-            $html = addcslashes($html,"'\"");
+            $html = addcslashes($html, "'\"");
             $doc->addScriptDeclaration("
 				jQuery(document).ready(function($){
 					$('input[name=\"task\"][value=\"user.login\"], form[action*=\"task=user.login\"] > :first-child')
 					.closest('form').find('input[type=\"submit\"],button[type=\"submit\"]')
-					.after('".$html."');
+					.after('" . $html . "');
 				});
 			");
             $doc->addStyleDeclaration("
@@ -112,20 +114,20 @@ class PlgSystemIDer_Login extends JPlugin
             ");
         }
 
+    }
 
-	}
+    public function onUserLogout($user, $options = array())
+    {
+        return true;
+    }
 
-	public function onUserLogout($user, $options = array())
-	{
-		return true;
-	}
+    /*
+     * Custom IDer events
+     */
 
-	/*
-	 * Custom IDer events
-	 */
-
-	// before_callback_handler
-	public function onIDerBeforeCallbackHandler($userInfo, $scopes){
+    // before_callback_handler
+    public function onIDerBeforeCallbackHandler($userInfo, $scopes)
+    {
 
         $handled = false;
         if (in_array('yourscope', $scopes)) {
