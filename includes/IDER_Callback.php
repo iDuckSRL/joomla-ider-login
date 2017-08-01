@@ -83,7 +83,7 @@ class IDER_Callback
 
                 self::user_logout();
 
-                //self::access_denied('Update the IDer email first!');
+                self::access_denied('Update the IDer email first!');
 
                 $app->redirect('/');
 
@@ -95,7 +95,6 @@ class IDER_Callback
         self::_login($userID);
 
         self::_update_ider_table($userID, $userInfo);
-
 
         if(!$user->guest) {
 
@@ -112,7 +111,7 @@ class IDER_Callback
 
         }
 
-        //self::access_denied("User unable to login.");
+        self::access_denied("User unable to login.");
 
     }
 
@@ -126,7 +125,7 @@ class IDER_Callback
             $errormsg = "Error authenticating user";
         }
 
-        drupal_set_message(t($errormsg), 'error');
+        JFactory::getApplication()->enqueueMessage(JText::_($errormsg), 'error');
 
     }
 
@@ -292,9 +291,10 @@ class IDER_Callback
             ->where($db->quoteName('user_value') . ' = ' . $db->quote($userMail));
 
         $db->setQuery($query);
+        $db->execute();
         $result = $db->getNumRows();
 
-        if($result == 0){
+        if(!$result){
             $areIdentical = false;
         }
 
@@ -346,17 +346,21 @@ class IDER_Callback
 
         // Initialise some variables
         $db = JFactory::getDbo();
-        $query = $db->getQuery(true)
-            ->select($db->quoteName('uid'))
-            ->from($db->quoteName('#__ider_user_info'))
+        $query = $db->getQuery(true);
+        $query
+            ->select(array('uid'))
+            ->from($db->quoteName('#__ider_user_data'))
             ->where($db->quoteName('user_field') . ' = ' . $db->quote('sub'))
             ->where($db->quoteName('user_value') . ' = ' . $db->quote($iderSub));
 
         $result = false;
         $db->setQuery($query);
+        $db->execute();
+
+        $result = $db->loadResult();
 
         if($db->getNumRows() > 0) {
-            $result = $db->loadResult(); // If it fails, it will throw a RuntimeException
+            return $result; // If it fails, it will throw a RuntimeException
         }
 
         return $result;
