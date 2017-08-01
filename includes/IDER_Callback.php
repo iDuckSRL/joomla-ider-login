@@ -47,7 +47,6 @@ class IDER_Callback
 
     }
 
-
     // register or authenticate user
     static function defaultHandler($userInfo)
     {
@@ -134,6 +133,7 @@ class IDER_Callback
      */
     static function user_logout()
     {
+
         $app = JFactory::getApplication();
         $user = JFactory::getUser();
 
@@ -195,7 +195,6 @@ class IDER_Callback
                     $result = JFactory::getDbo()->insertObject('#__ider_user_data', $data);
 
                 }
-
 
             }catch (RuntimeException $e){
 
