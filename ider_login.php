@@ -46,18 +46,23 @@ class PlgSystemIDer_Login extends JPlugin
 
 	public function onAfterRoute(){
 
-	    // hack router
+	    // Hack router
 	    $uri = JUri::getInstance();
 
-	    // TODO: check if the user is already logged in
+	    // I check if the user is not logged in
+        $user = JFactory::getUser();
 
-	    if(preg_match('/\/(?:iderbutton|idercallback)(?!.)/', $uri->getPath())) {
+        if($user->isGuest()) {
 
-	        IDER_Server::IDerOpenIdClientHandler();
+            if(preg_match('/\/(?:iderbutton|idercallback)(?!.)/', $uri->getPath())) {
+
+                IDER_Server::IDerOpenIdClientHandler();
+
+            }
 
         }
 
-	}
+    }
 
 	/*
 	 * I add the button for IDer login
