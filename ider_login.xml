@@ -65,6 +65,13 @@
 				/>
 				<field
 						type="textarea"
+						name="ider_campaigns_landing_pages"
+						label="PLG_SYSTEM_IDER_LOGIN_CAMPAIGNS_LANDING_PAGES"
+						description="PLG_SYSTEM_IDER_LOGIN_CAMPAIGNS_LANDING_PAGES_DESC"
+						required="false"
+				/>
+				<field
+						type="textarea"
 						name="ider_button_css"
 						label="PLG_SYSTEM_IDER_LOGIN_BUTTON_CSS"
 						description="PLG_SYSTEM_IDER_LOGIN_BUTTON_CSS_DESC"

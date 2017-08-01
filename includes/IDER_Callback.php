@@ -70,8 +70,6 @@ class IDER_Callback
 
         }
 
-        self::_update_ider_table($userID, $userInfo);
-
         $user = JFactory::getUser($userID);
 
         // check for email changes
@@ -96,7 +94,25 @@ class IDER_Callback
         // Log the User In
         self::_login($userID);
 
+        self::_update_ider_table($userID, $userInfo);
 
+
+        if(!$user->guest) {
+
+            $app = JFactory::getApplication('site');
+
+            // I'll setup the event dispatcher and I'll trigger the event
+            $dispatcher = JEventDispatcher::getInstance();
+            $handled = reset($dispatcher->trigger('onIDerAfterCallbackHandler', array($userInfo, $_SESSION['openid_connect_scope'])));
+
+            $plugin = JPluginHelper::getPlugin('system', 'ider_login');
+            $pluginParams = new JRegistry($plugin->params);
+
+            $app->redirect($pluginParams->get('ider_redirect_uri'));
+
+        }
+
+        //self::access_denied("User unable to login.");
 
     }
 
@@ -122,7 +138,7 @@ class IDER_Callback
         $app = JFactory::getApplication();
         $user = JFactory::getUser();
 
-        if(!$user->isGuest()){
+        if(!$user->guest){
             $userID = $user->get('id');
             $app->logout($userID, array());
             @session_destroy();
@@ -233,11 +249,11 @@ class IDER_Callback
     private static function _login($userID)
     {
 
+        $results = false;
+
         $loggedUser = JFactory::getUser();
 
         if($loggedUser->guest) {
-
-            $app = JFactory::getApplication('site');
 
             $db = JFactory::getDbo();
             $query = $db->getQuery(true)
@@ -246,18 +262,16 @@ class IDER_Callback
                 ->where($db->quoteName('id') . '=' . $userID);
             $user = $db->setQuery($query, 0, 1)->loadAssoc();
 
-            JPluginHelper::importPlugin( 'user' );
+            JPluginHelper::importPlugin('user');
             $dispatcher = JDispatcher::getInstance();
 
             // Initiate log in
             $options = array('action' => 'core.login.site', 'remember' => false);
             $results = $dispatcher->trigger('onUserLogin', array($user, $options));
 
-            if(reset($results)){
-                $app->redirect('/');
-            }
-
         }
+
+        return $results;
 
     }
 

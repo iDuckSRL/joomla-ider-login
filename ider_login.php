@@ -53,7 +53,7 @@ class PlgSystemIDer_Login extends JPlugin
         // I check if the user is not logged in
         $user = JFactory::getUser();
 
-        if ($user->isGuest) {
+        if ($user->guest) {
 
             if (preg_match('/\/(?:iderbutton|idercallback)(?!.)/', $uri->getPath())) {
 
@@ -138,5 +138,37 @@ class PlgSystemIDer_Login extends JPlugin
         }
         return $handled;
 
+    }
+
+    // after_callback_handler
+    public function onIDerAfterCallbackHandler($userInfo, $scopes)
+    {
+
+        $app = JFactory::getApplication();
+        $plugin = JPluginHelper::getPlugin('system', 'ider_login');
+        $pluginParams = new JRegistry($plugin->params);
+
+        if(!empty($scopes)){
+
+            if (in_array('yourscope', $scopes)) {
+                // do something...
+            }
+
+        }
+
+        $landingPages = $pluginParams->get('ider_campaigns_landing_pages');
+
+        preg_match_all('/^(?!#)([\w-]+)=(.+)/m', $landingPages, $matches);
+
+        $landingPagesArray = array_combine($matches[1], $matches[2]);
+
+        foreach ($landingPagesArray as $scope => $landingPage) {
+            if (in_array($scope, $scopes)) {
+
+                $app->redirect($landingPage);
+                exit;
+
+            }
+        }
     }
 }
