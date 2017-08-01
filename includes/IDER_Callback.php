@@ -197,7 +197,9 @@ class IDER_Callback
                 }
 
 
-            }catch (Exception $e){
+            }catch (RuntimeException $e){
+
+                self::access_denied($e->getMessage());
 
             }
 
@@ -253,20 +255,26 @@ class IDER_Callback
         $loggedUser = JFactory::getUser();
 
         if($loggedUser->guest) {
+            try{
 
-            $db = JFactory::getDbo();
-            $query = $db->getQuery(true)
-                ->select('*')
-                ->from($db->quoteName('#__users'))
-                ->where($db->quoteName('id') . '=' . $userID);
-            $user = $db->setQuery($query, 0, 1)->loadAssoc();
+                $db = JFactory::getDbo();
+                $query = $db->getQuery(true)
+                    ->select('*')
+                    ->from($db->quoteName('#__users'))
+                    ->where($db->quoteName('id') . '=' . $userID);
+                $user = $db->setQuery($query, 0, 1)->loadAssoc();
 
-            JPluginHelper::importPlugin('user');
-            $dispatcher = JDispatcher::getInstance();
+                JPluginHelper::importPlugin('user');
+                $dispatcher = JDispatcher::getInstance();
 
-            // Initiate log in
-            $options = array('action' => 'core.login.site', 'remember' => false);
-            $results = $dispatcher->trigger('onUserLogin', array($user, $options));
+                // Initiate log in
+                $options = array('action' => 'core.login.site', 'remember' => false);
+                $results = $dispatcher->trigger('onUserLogin', array($user, $options));
+
+            }catch (RuntimeException $e) {
+                self::access_denied($e->getMessage());
+            }
+
 
         }
 
@@ -281,22 +289,29 @@ class IDER_Callback
     {
         $areIdentical = true;
 
-        // Initialise some variables
-        $db = JFactory::getDbo();
-        $query = $db->getQuery(true)
-            ->select($db->quoteName('id'))
-            ->from($db->quoteName('#__ider_user_data'))
-            ->where($db->quoteName('uid') . ' = ' . $userID)
-            ->where($db->quoteName('user_field') . ' = ' . $db->quote('email'))
-            ->where($db->quoteName('user_value') . ' = ' . $db->quote($userMail));
+        try{
+            // Initialise some variables
+            $db = JFactory::getDbo();
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('id'))
+                ->from($db->quoteName('#__ider_user_data'))
+                ->where($db->quoteName('uid') . ' = ' . $userID)
+                ->where($db->quoteName('user_field') . ' = ' . $db->quote('email'))
+                ->where($db->quoteName('user_value') . ' = ' . $db->quote($userMail));
 
-        $db->setQuery($query);
-        $db->execute();
-        $result = $db->getNumRows();
+            $db->setQuery($query);
+            $db->execute();
+            $result = $db->getNumRows();
 
-        if(!$result){
+            if(!$result){
+                $areIdentical = false;
+            }
+
+        }catch (RuntimeException $e) {
             $areIdentical = false;
+            self::access_denied($e->getMessage());
         }
+
 
         return $areIdentical;
 
@@ -308,16 +323,20 @@ class IDER_Callback
     private static function _update_user_mail($userID, $email)
     {
 
-        $db = JFactory::getDbo();
-        $query = $db->getQuery(true);
-        $fields = array(
-            $db->quoteName('email') . ' = ' . $db->quote($email)
-        );
-        $conditions = array($db->quoteName('id') . ' = ' . $userID);
-        $query = $db->getQuery(true);
-        $query->update('#__users')->set($fields)->where($conditions);
-        $db->setQuery($query);
-        $db->execute();
+        try{
+            $db = JFactory::getDbo();
+            $query = $db->getQuery(true);
+            $fields = array(
+                $db->quoteName('email') . ' = ' . $db->quote($email)
+            );
+            $conditions = array($db->quoteName('id') . ' = ' . $userID);
+            $query = $db->getQuery(true);
+            $query->update('#__users')->set($fields)->where($conditions);
+            $db->setQuery($query);
+            $db->execute();
+        }catch (RuntimeException $e){
+            self::access_denied($e->getMessage());
+        }
 
     }
 
@@ -326,13 +345,17 @@ class IDER_Callback
      */
     private static function getUserIdBy($field, $value) {
 
-        // Initialise some variables
-        $db = JFactory::getDbo();
-        $query = $db->getQuery(true)
-            ->select($db->quoteName('id'))
-            ->from($db->quoteName('#__users'))
-            ->where($db->quoteName($field) . ' = ' . $db->quote($value));
-        $db->setQuery($query);
+        try{
+            // Initialise some variables
+            $db = JFactory::getDbo();
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('id'))
+                ->from($db->quoteName('#__users'))
+                ->where($db->quoteName($field) . ' = ' . $db->quote($value));
+            $db->setQuery($query);
+        }catch(RuntimeException $e) {
+            self::access_denied($e->getMessage());
+        }
 
         return $db->loadResult();
 
@@ -344,23 +367,28 @@ class IDER_Callback
      */
     private static function getUserIdBySub($iderSub) {
 
-        // Initialise some variables
-        $db = JFactory::getDbo();
-        $query = $db->getQuery(true);
-        $query
-            ->select(array('uid'))
-            ->from($db->quoteName('#__ider_user_data'))
-            ->where($db->quoteName('user_field') . ' = ' . $db->quote('sub'))
-            ->where($db->quoteName('user_value') . ' = ' . $db->quote($iderSub));
+        try{
+            // Initialise some variables
+            $db = JFactory::getDbo();
+            $query = $db->getQuery(true);
+            $query
+                ->select(array('uid'))
+                ->from($db->quoteName('#__ider_user_data'))
+                ->where($db->quoteName('user_field') . ' = ' . $db->quote('sub'))
+                ->where($db->quoteName('user_value') . ' = ' . $db->quote($iderSub));
 
-        $result = false;
-        $db->setQuery($query);
-        $db->execute();
+            $result = false;
+            $db->setQuery($query);
+            $db->execute();
 
-        $result = $db->loadResult();
+            $result = $db->loadResult();
 
-        if($db->getNumRows() > 0) {
-            return $result; // If it fails, it will throw a RuntimeException
+            if($db->getNumRows() > 0) {
+                return $result; // If it fails, it will throw a RuntimeException
+            }
+
+        }catch(RuntimeException $e) {
+            self::access_denied($e->getMessage());
         }
 
         return $result;
