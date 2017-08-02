@@ -212,6 +212,11 @@ class IDER_Callback
     private static function _do_register($userInfo)
     {
 
+        // format key=>iderdata value=>joomla field
+        $fieldMapping = array(
+            'field' => 'correspondentant field'
+        );
+        
         $randomPassword = substr(md5($userInfo->email), 0, 12);
 
         $data = array(
