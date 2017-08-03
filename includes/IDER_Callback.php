@@ -100,6 +100,7 @@ class IDER_Callback
             $app = JFactory::getApplication('site');
 
             // I'll setup the event dispatcher and I'll trigger the event
+            // TODO: Update the event dispatching to JFactory::getApplication()->triggerEvent('eventName', array($options));
             $dispatcher = JEventDispatcher::getInstance();
             $handled = reset($dispatcher->trigger('onIDerAfterCallbackHandler', array($userInfo, $_SESSION['openid_connect_scope'])));
 
