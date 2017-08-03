@@ -71,6 +71,14 @@ class IDER_Callback
 
         $user = JFactory::getUser($userID);
 
+        if($user->guest) {
+
+            self::_delete_ider_data($userID);
+            $userID = self::_do_register($userInfo);
+            $user = JFactory::getUser($userID);
+
+        }
+
         // check for email changes
         if($user->email !== $userInfo->email){
 
@@ -130,6 +138,37 @@ class IDER_Callback
     }
 
     /**
+     * Show error message if the user doesn't have access.
+     */
+    static function _delete_ider_data($userID)
+    {
+
+        try{
+            $db = JFactory::getDbo();
+            $query = $db->getQuery(true);
+
+            // delete all custom keys for user 1001.
+            $conditions = array(
+                $db->quoteName('uid') . ' = ' . $userID,
+            );
+
+            $query->delete($db->quoteName('#__ider_user_data'));
+            $query->where($conditions);
+
+            $db->setQuery($query);
+
+            $result = $db->execute();
+        }catch (RuntimeException $e) {
+
+        } finally{
+            return true;
+        }
+
+        return false;
+
+    }
+
+    /**
      * Logout the user
      */
     static function user_logout()
@@ -169,7 +208,7 @@ class IDER_Callback
 
                 $result = $db->loadResult();
 
-                if($result !== null) {
+                if(!empty($result)) {
                     // Update data
 
                     // Create an object for the record we are going to update.
@@ -213,6 +252,8 @@ class IDER_Callback
     private static function _do_register($userInfo)
     {
 
+        jimport('joomla.user.helper');
+
         // format key=>iderdata value=>joomla field
         $fieldMapping = array(
             'field' => 'correspondentant field'
@@ -227,7 +268,6 @@ class IDER_Callback
             'email2' => $userInfo->email,
             'password1' => $randomPassword,
             'password2' => $randomPassword,
-            'block' => 0
         );
 
         JFactory::getLanguage()->load('com_users');
@@ -239,7 +279,23 @@ class IDER_Callback
         $return = null;
 
         if($user == 'useractivate') {
+
+            $plugin = JPluginHelper::getPlugin('system', 'ider_login');
+            $pluginParams = new JRegistry($plugin->params);
+
             $return = self::getUserIdBy('email', $userInfo->email);
+            $user = JFactory::getUser($return);
+
+            if($pluginParams->get('ider_register_as_enabled')) {
+                $user->set('block', '0');
+            }
+
+            if($pluginParams->get('ider_register_as_activated')) {
+                $user->set('activation', '');
+            }
+
+            $user->save();
+
         }
 
         // destroy eventual login sessions
