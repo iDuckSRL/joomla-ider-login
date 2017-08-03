@@ -33,6 +33,9 @@ require_once 'includes/IDER_Server.php';
  */
 class PlgSystemIDer_Login extends JPlugin
 {
+
+    protected $pluginSettings;
+
     /**
      * Constructor.
      */
@@ -40,6 +43,7 @@ class PlgSystemIDer_Login extends JPlugin
     {
         // construct the parent
         parent::__construct($subject, $config);
+
         IDER_Server::instance();
 
     }
@@ -71,9 +75,7 @@ class PlgSystemIDer_Login extends JPlugin
     public function onBeforeRender()
     {
 
-        $plugin = JPluginHelper::getPlugin('system', 'ider_login');
-        $pluginParams = new JRegistry($plugin->params);
-        $isButtonEnabled = $pluginParams->get('ider_enable_in_login', '');
+        $isButtonEnabled = $this->params->get('ider_enable_in_login', false);
 
         if (JFactory::getApplication()->isSite() && $isButtonEnabled) {
             $doc = JFactory::getApplication()->getDocument();
@@ -148,9 +150,7 @@ class PlgSystemIDer_Login extends JPlugin
     public function onIDerAfterCallbackHandler($userInfo, $scopes)
     {
 
-        $app = JFactory::getApplication();
-        $plugin = JPluginHelper::getPlugin('system', 'ider_login');
-        $pluginParams = new JRegistry($plugin->params);
+        $pluginParams = new $this->params;
 
         if(!empty($scopes)){
 
