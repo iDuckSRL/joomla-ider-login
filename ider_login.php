@@ -28,8 +28,6 @@ require_once 'includes/IDER_Server.php';
 
 /**
  * Plugin class for login/register via IDer service.
- *
- * @since  0.7
  */
 class PlgSystemIDer_Login extends JPlugin
 {
@@ -48,6 +46,21 @@ class PlgSystemIDer_Login extends JPlugin
 
     }
 
+    /**
+     *  Event triggered after the user deleted
+     */
+    public function onUserAfterDelete($user, $success, $msg){
+        $userID = $user['id'];
+        if($success){
+            IDER_Callback::_delete_ider_data($userID);
+        }
+
+    }
+
+
+    /**
+     *  Event triggered after the route dispatching
+     */
     public function onAfterRoute()
     {
 
@@ -59,7 +72,7 @@ class PlgSystemIDer_Login extends JPlugin
 
         if ($user->guest) {
 
-            if (preg_match('/\/(?:iderbutton|idercallback)(?!.)/', $uri->getPath())) {
+            if (preg_match('/\/(?:' . \IDERConnect\IDEROpenIDClient::$IDERButtonURL . '|' . \IDERConnect\IDEROpenIDClient::$IDERRedirectURL . ')(?!.)/', $uri->getPath())) {
 
                 IDER_Server::IDerOpenIdClientHandler();
 
@@ -69,8 +82,8 @@ class PlgSystemIDer_Login extends JPlugin
 
     }
 
-    /*
-     * I add the button for IDer login
+    /**
+     * I add the button for IDer login on the beforeRender event
      */
     public function onBeforeRender()
     {
@@ -121,7 +134,7 @@ class PlgSystemIDer_Login extends JPlugin
 
     }
 
-    /*
+    /**
      * Custom IDer events
      */
 
@@ -169,5 +182,6 @@ class PlgSystemIDer_Login extends JPlugin
 
             }
         }
+
     }
 }
