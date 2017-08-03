@@ -76,7 +76,6 @@ class PlgSystemIDer_Login extends JPlugin
     {
 
         $isButtonEnabled = $this->params->get('ider_enable_in_login', false);
-
         if (JFactory::getApplication()->isSite() && $isButtonEnabled) {
             $doc = JFactory::getApplication()->getDocument();
             ob_start();
@@ -86,7 +85,7 @@ class PlgSystemIDer_Login extends JPlugin
             $doc->addScriptDeclaration($script);
 
             ob_start();
-            ?><a href="/iderbutton"><button type="button" class="btn btn-danger ider-login-button">Login with IDer</button></a><?php
+            ?><a href="<?php echo JUri::base() . \IDERConnect\IDEROpenIDClient::$IDERButtonURL ?>"><button type="button" class="btn btn-danger ider-login-button">Login with IDer</button></a><?php
             $html = ob_get_contents();
             ob_end_clean();
             $html = addcslashes($html, "'\"");
@@ -112,19 +111,14 @@ class PlgSystemIDer_Login extends JPlugin
                     border-radius: 7px!important;
                     background-color: #008ec2!important;
                     color: #fff!important;
-                    margin: 5px 5px 10px 0!important;
+                    margin: 3px 0!important;
                     border: none!important;
-                    padding: 7px 24px!important;
+                    padding: 5px 16px!important;
                     text-transform: uppercase!important;
                 }
             ");
         }
 
-    }
-
-    public function onUserLogout($user, $options = array())
-    {
-        return true;
     }
 
     /*
@@ -150,6 +144,7 @@ class PlgSystemIDer_Login extends JPlugin
     public function onIDerAfterCallbackHandler($userInfo, $scopes)
     {
 
+        $app = JFactory::getApplication();
         $pluginParams = new $this->params;
 
         if(!empty($scopes)){
