@@ -11,8 +11,7 @@
             https://ider.com
         </infourl>
         <downloads>
-            <downloadurl type="full" format="zip">https://github.com/JLMsrl/joomla3-ider-login/archive/master.zip
-            </downloadurl>
+            <downloadurl type="full" format="zip">https://github.com/JLMsrl/joomla3-ider-login/archive/0.8.zip</downloadurl>
         </downloads>
         <tags>
             <tag>stable</tag>
