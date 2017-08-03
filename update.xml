@@ -1,0 +1,18 @@
+<update>
+    <name>IDer Login</name>
+    <description>With this plugin you can provide login and registration process using the IDer Service.</description>
+    <element>plg_ider_login</element>
+    <type>file</type>
+    <version>0.7</version>
+    <infourl title="IDer Login">http://www.ider.com/</infourl>
+    <downloads>
+        <downloadurl type="full" format="zip">
+        </downloadurl>
+    </downloads>
+    <tags>
+        <tag>stable</tag>
+    </tags>
+    <maintainer>IDer</maintainer>
+    <maintainerurl>http://ider.com</maintainerurl>
+    <targetplatform name="joomla" version="3.[012345]"/>
+</update>

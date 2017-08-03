@@ -5,7 +5,7 @@
 	<creationDate>July 2017</creationDate>
 	<copyright>Copyright (C) JLM S.r.l. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-	<authorEmail>plug\@ider.com</authorEmail>
+	<authorEmail>plugin@ider.com</authorEmail>
 	<authorUrl>www.ider.com</authorUrl>
 	<version>PLG_SYSTEM_IDER_LOGIN_VERSION</version>
 	<description>PLG_SYSTEM_IDER_LOGIN_XML_DESCRIPTION</description>
@@ -52,6 +52,28 @@
 					<option value="0">PLG_SYSTEM_IDER_LOGIN_NO</option>
 				</field>
 				<field
+						name="ider_register_as_enabled"
+						type="radio"
+						label="PLG_SYSTEM_IDER_REGISTER_AS_ENABLED"
+						description="PLG_SYSTEM_IDER_REGISTER_AS_ENABLED_DESC"
+						class="btn-group btn-group-yesno"
+						default="1"
+				>
+					<option value="1">PLG_SYSTEM_IDER_LOGIN_YES</option>
+					<option value="0">PLG_SYSTEM_IDER_LOGIN_NO</option>
+				</field>
+				<field
+						name="ider_register_as_activated"
+						type="radio"
+						label="PLG_SYSTEM_IDER_REGISTER_AS_ACTIVATED"
+						description="PLG_SYSTEM_IDER_REGISTER_AS_ACTIVATED_DESC"
+						class="btn-group btn-group-yesno"
+						default="1"
+				>
+					<option value="1">PLG_SYSTEM_IDER_LOGIN_YES</option>
+					<option value="0">PLG_SYSTEM_IDER_LOGIN_NO</option>
+				</field>
+				<field
 						type="text"
 						name="ider_redirect_uri"
 						label="PLG_SYSTEM_IDER_LOGIN_REDIRECT_URI_LABEL"
@@ -91,4 +113,9 @@
 			<file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
 		</sql>
 	</uninstall>
+	<updateserver>
+		<server type="plugin" priority="1" name="IDer updates">
+			https://raw.githubusercontent.com/JLMsrl/joomla3-ider-login/master/update.xml
+		</server>
+	</updateserver>
 </extension>
