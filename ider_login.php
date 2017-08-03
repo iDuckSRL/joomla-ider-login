@@ -71,7 +71,11 @@ class PlgSystemIDer_Login extends JPlugin
     public function onBeforeRender()
     {
 
-        if (JFactory::getApplication()->isSite()) {
+        $plugin = JPluginHelper::getPlugin('system', 'ider_login');
+        $pluginParams = new JRegistry($plugin->params);
+        $isButtonEnabled = $pluginParams->get('ider_enable_in_login', '');
+
+        if (JFactory::getApplication()->isSite() && $isButtonEnabled) {
             $doc = JFactory::getApplication()->getDocument();
             ob_start();
 
