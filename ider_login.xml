@@ -1,118 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="3.x" type="plugin" group="system" method="upgrade">
-	<name>System - IDer Login</name>
-	<author>JLM S.r.l.</author>
-	<creationDate>July 2017</creationDate>
-	<copyright>Copyright (C) JLM S.r.l. All rights reserved.</copyright>
-	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-	<authorEmail>plugin@ider.com</authorEmail>
-	<authorUrl>www.ider.com</authorUrl>
-	<version>0.9</version>
-	<description>With this plugin you can provide login and registration process using the IDer Service.</description>
-	<files>
-		<filename plugin="ider_login">ider_login.php</filename>
-	</files>
-	<languages folder="language">
-		<language tag="en-GB">en-GB/en-GB.plg_system_ider_login.ini</language>
-	</languages>
-	<config>
-		<fields name="params">
-			<fieldset name="basic">
-				<field
-					type="text"
-					name="ider_client_id"
-					label="PLG_SYSTEM_IDER_LOGIN_CLIENTID_LABEL"
-					description="PLG_SYSTEM_IDER_LOGIN_CLIENTID_DESC"
-					required="true"
-				/>
-				<field
-					type="text"
-					name="ider_client_secret"
-					label="PLG_SYSTEM_IDER_LOGIN_CLIENTSECRET_LABEL"
-					description="PLG_SYSTEM_IDER_LOGIN_CLIENTSECRET_DESC"
-					required="true"
-				/>
-				<field
-					type="text"
-					name="ider_scope_name"
-					label="PLG_SYSTEM_IDER_LOGIN_SCOPE_NAME_LABEL"
-					description="PLG_SYSTEM_IDER_LOGIN_SCOPE_NAME_DESC"
-					required="true"
-				/>
-				<field
-						name="ider_enable_in_login"
-						type="radio"
-						label="PLG_SYSTEM_IDER_BUTTON_IN_LOGIN_LABEL"
-						description="PLG_SYSTEM_IDER_BUTTON_IN_LOGIN_DESC"
-						class="btn-group btn-group-yesno"
-						default="1"
-				>
-					<option value="1">PLG_SYSTEM_IDER_LOGIN_YES</option>
-					<option value="0">PLG_SYSTEM_IDER_LOGIN_NO</option>
-				</field>
-				<field
-						name="ider_register_as_enabled"
-						type="radio"
-						label="PLG_SYSTEM_IDER_REGISTER_AS_ENABLED"
-						description="PLG_SYSTEM_IDER_REGISTER_AS_ENABLED_DESC"
-						class="btn-group btn-group-yesno"
-						default="1"
-				>
-					<option value="1">PLG_SYSTEM_IDER_LOGIN_YES</option>
-					<option value="0">PLG_SYSTEM_IDER_LOGIN_NO</option>
-				</field>
-				<field
-						name="ider_register_as_activated"
-						type="radio"
-						label="PLG_SYSTEM_IDER_REGISTER_AS_ACTIVATED"
-						description="PLG_SYSTEM_IDER_REGISTER_AS_ACTIVATED_DESC"
-						class="btn-group btn-group-yesno"
-						default="1"
-				>
-					<option value="1">PLG_SYSTEM_IDER_LOGIN_YES</option>
-					<option value="0">PLG_SYSTEM_IDER_LOGIN_NO</option>
-				</field>
-				<field
-						type="text"
-						name="ider_redirect_uri"
-						label="PLG_SYSTEM_IDER_LOGIN_REDIRECT_URI_LABEL"
-						description="PLG_SYSTEM_IDER_LOGIN_REDIRECT_URI_DESC"
-						required="false"
-				/>
-				<field
-					type="spacer"
-					name="spacer"
-					hr="true"
-				/>
-				<field
-						type="textarea"
-						name="ider_campaigns_landing_pages"
-						label="PLG_SYSTEM_IDER_LOGIN_CAMPAIGNS_LANDING_PAGES"
-						description="PLG_SYSTEM_IDER_LOGIN_CAMPAIGNS_LANDING_PAGES_DESC"
-						required="false"
-				/>
-				<field
-						type="textarea"
-						name="ider_button_css"
-						label="PLG_SYSTEM_IDER_LOGIN_BUTTON_CSS"
-						description="PLG_SYSTEM_IDER_LOGIN_BUTTON_CSS_DESC"
-						required="false"
-				/>
+    <extension version="3.x" type="plugin" group="system" method="upgrade">
+        <name>System - IDer Login</name>
+        <author>JLM S.r.l.</author>
+        <creationDate>July 2017</creationDate>
+        <copyright>Copyright (C) JLM S.r.l. All rights reserved.</copyright>
+        <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+        <authorEmail>plugin@ider.com</authorEmail>
+        <authorUrl>www.ider.com</authorUrl>
+        <version>0.9</version>
+        <description>With this plugin you can provide login and registration process using the IDer Service.</description>
+        <files>
+            <filename plugin="ider_login">ider_login.php</filename>
+            <filename>index.html</filename>
+            <folder>assets</folder>
+            <folder>includes</folder>
+            <folder>language</folder>
+            <folder>log</folder>
+            <folder>sql</folder>
+        </files>
+        <languages folder="language">
+            <language tag="en-GB">en-GB/en-GB.plg_system_ider_login.ini</language>
+        </languages>
+        <config>
+            <fields name="params">
+                <fieldset name="basic">
+                    <field type="text" name="ider_client_id" label="PLG_SYSTEM_IDER_LOGIN_CLIENTID_LABEL" description="PLG_SYSTEM_IDER_LOGIN_CLIENTID_DESC" required="true" />
+                    <field type="text" name="ider_client_secret" label="PLG_SYSTEM_IDER_LOGIN_CLIENTSECRET_LABEL" description="PLG_SYSTEM_IDER_LOGIN_CLIENTSECRET_DESC" required="true" />
+                    <field type="text" name="ider_scope_name" label="PLG_SYSTEM_IDER_LOGIN_SCOPE_NAME_LABEL" description="PLG_SYSTEM_IDER_LOGIN_SCOPE_NAME_DESC" required="true" />
+                    <field name="ider_enable_in_login" type="radio" label="PLG_SYSTEM_IDER_BUTTON_IN_LOGIN_LABEL" description="PLG_SYSTEM_IDER_BUTTON_IN_LOGIN_DESC" class="btn-group btn-group-yesno" default="1">
+                        <option value="1">PLG_SYSTEM_IDER_LOGIN_YES</option>
+                        <option value="0">PLG_SYSTEM_IDER_LOGIN_NO</option>
+                    </field>
+                    <field name="ider_register_as_enabled" type="radio" label="PLG_SYSTEM_IDER_REGISTER_AS_ENABLED" description="PLG_SYSTEM_IDER_REGISTER_AS_ENABLED_DESC" class="btn-group btn-group-yesno" default="1">
+                        <option value="1">PLG_SYSTEM_IDER_LOGIN_YES</option>
+                        <option value="0">PLG_SYSTEM_IDER_LOGIN_NO</option>
+                    </field>
+                    <field name="ider_register_as_activated" type="radio" label="PLG_SYSTEM_IDER_REGISTER_AS_ACTIVATED" description="PLG_SYSTEM_IDER_REGISTER_AS_ACTIVATED_DESC" class="btn-group btn-group-yesno" default="1">
+                        <option value="1">PLG_SYSTEM_IDER_LOGIN_YES</option>
+                        <option value="0">PLG_SYSTEM_IDER_LOGIN_NO</option>
+                    </field>
+                    <field type="text" name="ider_redirect_uri" label="PLG_SYSTEM_IDER_LOGIN_REDIRECT_URI_LABEL" description="PLG_SYSTEM_IDER_LOGIN_REDIRECT_URI_DESC" required="false" />
+                    <field type="spacer" name="spacer" hr="true" />
+                    <field type="textarea" name="ider_campaigns_landing_pages" label="PLG_SYSTEM_IDER_LOGIN_CAMPAIGNS_LANDING_PAGES" description="PLG_SYSTEM_IDER_LOGIN_CAMPAIGNS_LANDING_PAGES_DESC" required="false" />
+                    <field type="textarea" name="ider_button_css" label="PLG_SYSTEM_IDER_LOGIN_BUTTON_CSS" description="PLG_SYSTEM_IDER_LOGIN_BUTTON_CSS_DESC" required="false" />
 
-			</fieldset>
-		</fields>
-	</config>
-	<install>
-		<sql>
-			<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
-		</sql>
-	</install>
-	<uninstall>
-		<sql>
-			<file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
-		</sql>
-	</uninstall>
-	<updateserver>
-		<server type="extension" priority="1" name="IDer updates">https://raw.githubusercontent.com/JLMsrl/joomla3-ider-login/master/update.xml</server>
-	</updateserver>
-</extension>
+                </fieldset>
+            </fields>
+        </config>
+        <install>
+            <sql>
+                <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+            </sql>
+        </install>
+        <uninstall>
+            <sql>
+                <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+            </sql>
+        </uninstall>
+        <updateserver>
+            <server type="extension" priority="1" name="IDer updates">https://raw.githubusercontent.com/JLMsrl/joomla3-ider-login/master/update.xml</server>
+        </updateserver>
+    </extension>
