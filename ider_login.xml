@@ -114,6 +114,6 @@
 		</sql>
 	</uninstall>
 	<updateserver>
-		<server type="plugin" priority="1" name="IDer updates">https://raw.githubusercontent.com/JLMsrl/joomla3-ider-login/master/update.xml</server>
+		<server type="extension" priority="1" name="IDer updates">https://raw.githubusercontent.com/JLMsrl/joomla3-ider-login/master/update.xml</server>
 	</updateserver>
 </extension>
