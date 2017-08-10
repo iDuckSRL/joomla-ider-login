@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3.x" type="plugin" group="system" method="upgrade">
-	<name>PLG_SYSTEM_IDER_LOGIN</name>
+	<name>System - IDer Login</name>
 	<author>JLM S.r.l.</author>
 	<creationDate>July 2017</creationDate>
 	<copyright>Copyright (C) JLM S.r.l. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorEmail>plugin@ider.com</authorEmail>
 	<authorUrl>www.ider.com</authorUrl>
-	<version>PLG_SYSTEM_IDER_LOGIN_VERSION</version>
-	<description>PLG_SYSTEM_IDER_LOGIN_XML_DESCRIPTION</description>
+	<version>0.9</version>
+	<description>With this plugin you can provide login and registration process using the IDer Service.</description>
 	<files>
 		<filename plugin="ider_login">ider_login.php</filename>
 	</files>
