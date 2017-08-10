@@ -57,7 +57,4 @@
                 <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
             </sql>
         </uninstall>
-        <updateserver>
-            <server type="extension" priority="1" name="IDer updates">https://raw.githubusercontent.com/JLMsrl/joomla3-ider-login/master/update.xml</server>
-        </updateserver>
     </extension>
