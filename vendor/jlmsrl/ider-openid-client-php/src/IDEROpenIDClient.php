@@ -2,7 +2,7 @@
 
 /**
  *
- * Copyright IDER 2017
+ * Copyright IDER 2018
  *
  * IDEROpenIDConnectClient for PHP5
  * Author: Davide Lattanzio <info@dualweb.it>

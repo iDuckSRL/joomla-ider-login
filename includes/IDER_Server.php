@@ -15,7 +15,7 @@
  * @package      Joomla.Plugin
  * @subpackage   System.IDer_Login
  * @author       Emanuele Coppola <plugins@jlm.srl>
- * @copyright    Copyright (c) 2016 - 2017 Jlm SRL (http://www.jlm.srl)
+ * @copyright    Copyright (c) 2016 - 2018 Jlm SRL (http://www.jlm.srl)
  * @license      https://www.ider.com/IDER-LICENSE-COMMUNITY.txt
  */
 
