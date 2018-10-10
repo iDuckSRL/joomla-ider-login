@@ -65,7 +65,7 @@ class IDER_Server
         $plugin = JPluginHelper::getPlugin('system', 'ider_login');
         $pluginParams = new JRegistry($plugin->params);
 
-        \IDERConnect\IDEROpenIDClient::$IDERLogFile = JPATH_PLUGINS . DS . 'system' . DS . 'ider_login' . DS . 'log' . DS . 'ider-connect.log';
+        \IDERConnect\IDEROpenIDClient::$IDERLogFile = JPATH_PLUGINS . '/system/ider_login/log/ider-connect.log';
 
         if (is_null(\IDERConnect\IDEROpenIDClient::$_instance)) {
             \IDERConnect\IDEROpenIDClient::$_instance = new \IDERConnect\IDEROpenIDClient($pluginParams->get('ider_client_id', ''), $pluginParams->get('ider_client_secret', ''), $pluginParams->get('ider_scope_name', ''));
