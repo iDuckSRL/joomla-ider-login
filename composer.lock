@@ -1,24 +1,23 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "hash": "26ece13709f16f1f3314b732fa1803a9",
-    "content-hash": "1dd10bbc48e31b845e4bf317252dfabf",
+    "content-hash": "08fb6a55f4f3b59ebfae7c3fba978f0b",
     "packages": [
         {
             "name": "jlmsrl/ider-openid-client-php",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JLMsrl/ider-openid-client-php.git",
-                "reference": "08ee96ed30d4047b42b297dd66a674312fed7180"
+                "reference": "843c35808f3feb17bcea21b9f0b7e6f216706d21"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JLMsrl/ider-openid-client-php/zipball/08ee96ed30d4047b42b297dd66a674312fed7180",
-                "reference": "08ee96ed30d4047b42b297dd66a674312fed7180",
+                "url": "https://api.github.com/repos/JLMsrl/ider-openid-client-php/zipball/843c35808f3feb17bcea21b9f0b7e6f216706d21",
+                "reference": "843c35808f3feb17bcea21b9f0b7e6f216706d21",
                 "shasum": ""
             },
             "require": {
@@ -42,7 +41,7 @@
                 }
             ],
             "description": "IDER OpenID Generic Client for PHP",
-            "time": "2017-06-22 10:35:20"
+            "time": "2018-10-10T05:40:43+00:00"
         },
         {
             "name": "phpseclib/phpseclib",
@@ -131,7 +130,7 @@
                 "x.509",
                 "x509"
             ],
-            "time": "2016-01-18 17:07:21"
+            "time": "2016-01-18T17:07:21+00:00"
         }
     ],
     "packages-dev": [],

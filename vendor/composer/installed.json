@@ -1,5 +1,44 @@
 [
     {
+        "name": "jlmsrl/ider-openid-client-php",
+        "version": "1.1.0",
+        "version_normalized": "1.1.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/JLMsrl/ider-openid-client-php.git",
+            "reference": "843c35808f3feb17bcea21b9f0b7e6f216706d21"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/JLMsrl/ider-openid-client-php/zipball/843c35808f3feb17bcea21b9f0b7e6f216706d21",
+            "reference": "843c35808f3feb17bcea21b9f0b7e6f216706d21",
+            "shasum": ""
+        },
+        "require": {
+            "ext-curl": "*",
+            "ext-json": "*",
+            "php": ">=5.3",
+            "phpseclib/phpseclib": "2.0.1"
+        },
+        "time": "2018-10-10T05:40:43+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "IDERConnect\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "authors": [
+            {
+                "name": "Davide Lattanzio",
+                "email": "davide.lattanzio@jlm.srl",
+                "homepage": "https://ider.com"
+            }
+        ],
+        "description": "IDER OpenID Generic Client for PHP"
+    },
+    {
         "name": "phpseclib/phpseclib",
         "version": "2.0.1",
         "version_normalized": "2.0.1.0",
@@ -29,7 +68,7 @@
             "ext-mcrypt": "Install the Mcrypt extension in order to speed up a few other cryptographic operations.",
             "ext-openssl": "Install the OpenSSL extension in order to speed up a wide variety of cryptographic operations."
         },
-        "time": "2016-01-18 17:07:21",
+        "time": "2016-01-18T17:07:21+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -89,44 +128,5 @@
             "x.509",
             "x509"
         ]
-    },
-    {
-        "name": "jlmsrl/ider-openid-client-php",
-        "version": "1.0.0",
-        "version_normalized": "1.0.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/JLMsrl/ider-openid-client-php.git",
-            "reference": "08ee96ed30d4047b42b297dd66a674312fed7180"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/JLMsrl/ider-openid-client-php/zipball/08ee96ed30d4047b42b297dd66a674312fed7180",
-            "reference": "08ee96ed30d4047b42b297dd66a674312fed7180",
-            "shasum": ""
-        },
-        "require": {
-            "ext-curl": "*",
-            "ext-json": "*",
-            "php": ">=5.3",
-            "phpseclib/phpseclib": "2.0.1"
-        },
-        "time": "2017-06-22 10:35:20",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "IDERConnect\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "authors": [
-            {
-                "name": "Davide Lattanzio",
-                "email": "davide.lattanzio@jlm.srl",
-                "homepage": "https://ider.com"
-            }
-        ],
-        "description": "IDER OpenID Generic Client for PHP"
     }
 ]

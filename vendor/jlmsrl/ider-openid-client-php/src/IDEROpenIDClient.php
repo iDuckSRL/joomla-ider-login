@@ -97,6 +97,11 @@ class IDEROpenIDClient
     private $idToken;
 
     /**
+     * @var string base URL
+     */
+    private $baseUrl;
+
+    /**
      * @var array holds scopes
      */
     private $scopes = array();
@@ -196,6 +201,14 @@ class IDEROpenIDClient
     public function setResponseTypes($response_types)
     {
         $this->responseTypes = array_merge($this->responseTypes, (array)$response_types);
+    }
+
+    /**
+     * @param $baseUrl
+     */
+    public function setBaseUrl($baseUrl)
+    {
+        $this->baseUrl = $baseUrl;
     }
 
     /**
@@ -387,6 +400,12 @@ class IDEROpenIDClient
      */
     protected function getBaseUrl()
     {
+
+        // If the base URL is set, then use it.
+        if($this->baseUrl){
+            return $this->baseUrl;
+        }
+
         /**
          * Thank you
          * http://stackoverflow.com/questions/189113/how-do-i-get-current-page-full-url-in-php-on-a-windows-iis-server
@@ -402,6 +421,7 @@ class IDEROpenIDClient
         $port = null;
         $hostname = null;
         $setport = null;
+        $uri = strtok($_SERVER["REQUEST_URI"],'?'); // removed query string
 
         if (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
             $protocol = $_SERVER['HTTP_X_FORWARDED_PROTO'];
@@ -431,11 +451,13 @@ class IDEROpenIDClient
             $hostname = $_SERVER['SERVER_ADDR'];
         }
 
+        $hostname = preg_replace('/:[0-9]+/', '', $hostname);
+
         $useport = ($protocol === 'https' && $port !== 443) || ($protocol === 'http' && $port !== 80);
 
-        $base_page_url = $protocol . '://' . $hostname . ($useport ? (':' . $port) : '');
+        $base_page_url = $protocol . '://' . $hostname . ($useport ? (':' . $port) : '') . $uri;
 
-        return $base_page_url . "/";
+        return $base_page_url;
     }
 
 

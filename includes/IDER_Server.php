@@ -87,7 +87,10 @@ class IDER_Server
                 $iderconnect->setScope($scope);
             }
 
+            $iderconnect->setBaseUrl(JUri::base());
+
             $iderconnect->authenticate();
+
             $userInfo = $iderconnect->requestUserInfo();
 
             // I'll call the IDer handler
