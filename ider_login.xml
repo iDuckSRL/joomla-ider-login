@@ -7,7 +7,7 @@
         <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
         <authorEmail>plugin@ider.com</authorEmail>
         <authorUrl>www.ider.com</authorUrl>
-        <version>1.1</version>
+        <version>1.2</version>
         <description>With this plugin you can provide login and registration process using the IDer Service.</description>
         <files>
             <filename plugin="ider_login">ider_login.php</filename>
