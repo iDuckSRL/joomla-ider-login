@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "jlmsrl/ider-openid-client-php",
-            "version": "1.1.0",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JLMsrl/ider-openid-client-php.git",
-                "reference": "843c35808f3feb17bcea21b9f0b7e6f216706d21"
+                "reference": "93cbc7749224118fd456d749283ea36a1d256f4a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JLMsrl/ider-openid-client-php/zipball/843c35808f3feb17bcea21b9f0b7e6f216706d21",
-                "reference": "843c35808f3feb17bcea21b9f0b7e6f216706d21",
+                "url": "https://api.github.com/repos/JLMsrl/ider-openid-client-php/zipball/93cbc7749224118fd456d749283ea36a1d256f4a",
+                "reference": "93cbc7749224118fd456d749283ea36a1d256f4a",
                 "shasum": ""
             },
             "require": {
@@ -41,7 +41,7 @@
                 }
             ],
             "description": "IDER OpenID Generic Client for PHP",
-            "time": "2018-10-10T05:40:43+00:00"
+            "time": "2018-11-29T16:31:51+00:00"
         },
         {
             "name": "phpseclib/phpseclib",

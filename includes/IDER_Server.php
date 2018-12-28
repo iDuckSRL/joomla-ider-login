@@ -67,6 +67,9 @@ class IDER_Server
 
         \IDERConnect\IDEROpenIDClient::$IDERLogFile = JPATH_PLUGINS . '/system/ider_login/log/ider-connect.log';
 
+        // Override the base URL with the WP one.
+        \IDERConnect\IDEROpenIDClient::$BaseUrl = JURI::base();
+
         if (is_null(\IDERConnect\IDEROpenIDClient::$_instance)) {
             \IDERConnect\IDEROpenIDClient::$_instance = new \IDERConnect\IDEROpenIDClient($pluginParams->get('ider_client_id', ''), $pluginParams->get('ider_client_secret', ''), $pluginParams->get('ider_scope_name', ''));
         }
@@ -86,8 +89,6 @@ class IDER_Server
             if (!empty($scope)) {
                 $iderconnect->setScope($scope);
             }
-
-            $iderconnect->setBaseUrl(JUri::base());
 
             $iderconnect->authenticate();
 

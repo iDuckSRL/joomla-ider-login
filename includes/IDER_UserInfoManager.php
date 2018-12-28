@@ -23,12 +23,6 @@ defined('_JEXEC') or die;
 
 /**
  * Function to transform and map json to local fields.
- *
- * @package     WordPress
- * @subpackage  Ider
- * @author      Davide Lattanzio <plugins@jlm.srl>
- * @since       1.0
- *
  */
 
 class IDER_UserInfoManager

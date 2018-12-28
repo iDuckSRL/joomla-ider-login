@@ -2,7 +2,7 @@
 
 /**
  *
- * Copyright IDER 2018
+ * Copyright IDER 2017
  *
  * IDEROpenIDConnectClient for PHP5
  * Author: Davide Lattanzio <info@dualweb.it>
@@ -22,6 +22,11 @@ class IDEROpenIDClient
 {
 
     /**
+     * Overridable base URL.
+     */
+    static $BaseUrl;
+
+    /**
      * @var string Last Instance
      */
     static $IDERServer = 'https://oid.ider.com/core';
@@ -36,7 +41,7 @@ class IDEROpenIDClient
      */
     static $defaultScope = 'openid';
 
-     /**
+    /**
      * @var string IDER server
      */
     static $IDERButtonURL = 'iderbutton';
@@ -131,7 +136,7 @@ class IDEROpenIDClient
     public function __construct($client_id, $client_secret, $scopes = null)
     {
         IDERHelpers::logRotate('======= IDer boot ======', static::$IDERLogFile);
-        IDERHelpers::logRotate('Called url: ' . $this->getRedirectURL(), static::$IDERLogFile);
+        IDERHelpers::logRotate('Called url: ' . $this->getRedirectURL(false), static::$IDERLogFile);
 
 
         $this->setProviderURL(static::$IDERServer);
@@ -201,14 +206,6 @@ class IDEROpenIDClient
     public function setResponseTypes($response_types)
     {
         $this->responseTypes = array_merge($this->responseTypes, (array)$response_types);
-    }
-
-    /**
-     * @param $baseUrl
-     */
-    public function setBaseUrl($baseUrl)
-    {
-        $this->baseUrl = $baseUrl;
     }
 
     /**
@@ -378,7 +375,7 @@ class IDEROpenIDClient
      *
      * @return string
      */
-    public function getRedirectURL()
+    public function getRedirectURL($overwritten = true)
     {
 
         // If the redirect URL has been set then return it.
@@ -387,7 +384,7 @@ class IDEROpenIDClient
         }
 
         // Other-wise return the URL of the current page
-        $currentUrl = $this->getBaseUrl() . substr($_SERVER['REQUEST_URI'], 1);
+        $currentUrl = $this->getBaseUrl($overwritten) . substr($_SERVER['REQUEST_URI'], 1);
 
         return $currentUrl;
     }
@@ -398,12 +395,12 @@ class IDEROpenIDClient
      *
      * @return string
      */
-    protected function getBaseUrl()
+    protected function getBaseUrl($overwritten = true)
     {
 
         // If the base URL is set, then use it.
-        if($this->baseUrl){
-            return $this->baseUrl;
+        if(static::$BaseUrl && $overwritten){
+            return rtrim(static::$BaseUrl, '/') . '/';
         }
 
         /**
@@ -421,7 +418,6 @@ class IDEROpenIDClient
         $port = null;
         $hostname = null;
         $setport = null;
-        $uri = strtok($_SERVER["REQUEST_URI"],'?'); // removed query string
 
         if (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
             $protocol = $_SERVER['HTTP_X_FORWARDED_PROTO'];
@@ -432,7 +428,6 @@ class IDEROpenIDClient
         } else {
             $protocol = "http";
         }
-
         if (isset($_SERVER['HTTP_X_FORWARDED_PORT'])) {
             $port = intval($_SERVER['HTTP_X_FORWARDED_PORT']);
         } else if (isset($_SERVER["SERVER_PORT"])) {
@@ -442,7 +437,6 @@ class IDEROpenIDClient
         } else {
             $port = 80;
         }
-
         if (isset($_SERVER['HTTP_HOST'])) {
             $hostname = $_SERVER['HTTP_HOST'];
         } else if (isset($_SERVER['SERVER_NAME'])) {
@@ -455,9 +449,10 @@ class IDEROpenIDClient
 
         $useport = ($protocol === 'https' && $port !== 443) || ($protocol === 'http' && $port !== 80);
 
-        $base_page_url = $protocol . '://' . $hostname . ($useport ? (':' . $port) : '') . $uri;
+        $base_page_url = $protocol . '://' . $hostname . ($useport ? (':' . $port) : '');
 
-        return $base_page_url;
+        return rtrim($base_page_url, '/') . '/';
+
     }
 
 

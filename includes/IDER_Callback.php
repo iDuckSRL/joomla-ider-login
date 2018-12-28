@@ -38,7 +38,10 @@ class IDER_Callback
 
         // I'll setup the event dispatcher and I'll trigger the event
         $dispatcher = JEventDispatcher::getInstance();
-        $handled = reset($dispatcher->trigger('onIDerBeforeCallbackHandler', array($userInfo, $_SESSION['openid_connect_scope'])));
+
+        $iderBeforeCallback = $dispatcher->trigger('onIDerBeforeCallbackHandler', array($userInfo, $_SESSION['openid_connect_scope']));
+
+        $handled = reset($iderBeforeCallback);
 
         // if user function hadn't been exclusive let's resume the standard flow
         if (!$handled) {
@@ -110,12 +113,21 @@ class IDER_Callback
             // I'll setup the event dispatcher and I'll trigger the event
             // TODO: Update the event dispatching to JFactory::getApplication()->triggerEvent('eventName', array($options));
             $dispatcher = JEventDispatcher::getInstance();
-            $handled = reset($dispatcher->trigger('onIDerAfterCallbackHandler', array($userInfo, $_SESSION['openid_connect_scope'])));
+
+            $iderAfterCallback = $dispatcher->trigger('onIDerAfterCallbackHandler', array($userInfo, $_SESSION['openid_connect_scope']));
+
+            $handled = reset($iderAfterCallback);
 
             $plugin = JPluginHelper::getPlugin('system', 'ider_login');
             $pluginParams = new JRegistry($plugin->params);
 
-            $app->redirect($pluginParams->get('ider_redirect_uri'));
+            $iderRedirectUri = $pluginParams->get('ider_redirect_uri');
+
+            if(empty($iderRedirectUri)) {
+                $iderRedirectUri = '/';
+            }
+
+            $app->redirect($iderRedirectUri);
 
         }
 
