@@ -44,8 +44,6 @@
 
 namespace phpseclib\Crypt;
 
-use phpseclib\Crypt\Base;
-
 /**
  * Pure-PHP implementation of RC4.
  *
@@ -109,7 +107,7 @@ class RC4 extends Base
      * @var string
      * @access private
      */
-    var $key = "\0";
+    var $key;
 
     /**
      * The Key Stream for decryption and encryption
@@ -146,8 +144,16 @@ class RC4 extends Base
      */
     function isValidEngine($engine)
     {
-        switch ($engine) {
-            case Base::ENGINE_OPENSSL:
+        if ($engine == self::ENGINE_OPENSSL) {
+            // quoting https://www.openssl.org/news/openssl-3.0-notes.html, OpenSSL 3.0.1
+            // "Moved all variations of the EVP ciphers CAST5, BF, IDEA, SEED, RC2, RC4, RC5, and DES to the legacy provider"
+            // in theory openssl_get_cipher_methods() should catch this but, on GitHub Actions, at least, it does not
+            if (defined('OPENSSL_VERSION_TEXT') && version_compare(preg_replace('#OpenSSL (\d+\.\d+\.\d+) .*#', '$1', OPENSSL_VERSION_TEXT), '3.0.1', '>=')) {
+                return false;
+            }
+            if (version_compare(PHP_VERSION, '5.3.7') >= 0) {
+                $this->cipher_name_openssl = 'rc4-40';
+            } else {
                 switch (strlen($this->key)) {
                     case 5:
                         $this->cipher_name_openssl = 'rc4-40';
@@ -161,6 +167,7 @@ class RC4 extends Base
                     default:
                         return false;
                 }
+            }
         }
 
         return parent::isValidEngine($engine);
@@ -202,7 +209,7 @@ class RC4 extends Base
         if ($length < 8) {
             $this->key_length = 1;
         } elseif ($length > 2048) {
-            $this->key_length = 248;
+            $this->key_length = 256;
         } else {
             $this->key_length = $length >> 3;
         }
@@ -221,7 +228,7 @@ class RC4 extends Base
      */
     function encrypt($plaintext)
     {
-        if ($this->engine != Base::ENGINE_INTERNAL) {
+        if ($this->engine != self::ENGINE_INTERNAL) {
             return parent::encrypt($plaintext);
         }
         return $this->_crypt($plaintext, self::ENCRYPT);
@@ -241,7 +248,7 @@ class RC4 extends Base
      */
     function decrypt($ciphertext)
     {
-        if ($this->engine != Base::ENGINE_INTERNAL) {
+        if ($this->engine != self::ENGINE_INTERNAL) {
             return parent::decrypt($ciphertext);
         }
         return $this->_crypt($ciphertext, self::DECRYPT);

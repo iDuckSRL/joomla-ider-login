@@ -6,6 +6,10 @@ namespace Composer\Autoload;
 
 class ComposerStaticInitffe24b6a6dc1190e013039615b90aa09
 {
+    public static $files = array (
+        'decc78cc4436b1292c6c0d151b19445c' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
+    );
+
     public static $prefixLengthsPsr4 = array (
         'p' => 
         array (
@@ -24,8 +28,12 @@ class ComposerStaticInitffe24b6a6dc1190e013039615b90aa09
         ),
         'IDERConnect\\' => 
         array (
-            0 => __DIR__ . '/..' . '/jlmsrl/ider-openid-client-php/src',
+            0 => __DIR__ . '/..' . '/iducksrl/ider-openid-client-php/src',
         ),
+    );
+
+    public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
@@ -33,6 +41,7 @@ class ComposerStaticInitffe24b6a6dc1190e013039615b90aa09
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInitffe24b6a6dc1190e013039615b90aa09::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitffe24b6a6dc1190e013039615b90aa09::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitffe24b6a6dc1190e013039615b90aa09::$classMap;
 
         }, null, ClassLoader::class);
     }

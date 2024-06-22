@@ -1,5 +1,16 @@
 {
+    "name": "iducksrl/joomla-ider-client",
+    "description": "IDER Login - Joomla Plugin",
+    "keywords": [
+        "framework",
+        "ider",
+        "php",
+        "joomla",
+        "openid"
+    ],
+    "type": "project",
+    "minimum-stability": "stable",
     "require": {
-        "jlmsrl/ider-openid-client-php": "~1.0"
+        "iducksrl/ider-openid-client-php": "^1.1.5"
     }
 }

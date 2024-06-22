@@ -14,7 +14,7 @@ This work is based on OpenIDConnectClient for PHP5 by Michael Jett. Thanks.
 ## Install ##
  1. Install library using composer
 ```
-composer require jlmsrl/ider-openid-client-php
+composer require iducksrl/ider-openid-client-php
 ```
  2. Include composer autoloader
 ```php

@@ -4,64 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9483373dff00ce67dd263a8dd8e70f78",
+    "content-hash": "b8868c8a424a6b1844e8e169a75ccb8a",
     "packages": [
         {
-            "name": "iducksrl/ider-openid-client-php",
-            "version": "1.1.5",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/iDuckSRL/ider-openid-client-php.git",
-                "reference": "b34029d7aea772107278308828f3e6cd8b9d7827"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/iDuckSRL/ider-openid-client-php/zipball/b34029d7aea772107278308828f3e6cd8b9d7827",
-                "reference": "b34029d7aea772107278308828f3e6cd8b9d7827",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "ext-json": "*",
-                "php": ">=5.3",
-                "phpseclib/phpseclib": "^2.0.47"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "IDERConnect\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Davide Lattanzio",
-                    "email": "davide.lattanzio@jlm.srl",
-                    "homepage": "https://ider.com"
-                }
-            ],
-            "description": "IDER OpenID Generic Client for PHP",
-            "support": {
-                "issues": "https://github.com/iDuckSRL/ider-openid-client-php/issues",
-                "source": "https://github.com/iDuckSRL/ider-openid-client-php/tree/v1.1.5"
-            },
-            "time": "2024-06-22T14:17:57+00:00"
-        },
-        {
             "name": "phpseclib/phpseclib",
-            "version": "2.0.47",
+            "version": "2.0.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "b7d7d90ee7df7f33a664b4aea32d50a305d35adb"
+                "reference": "d64fbe1ef1fd12c812f6542abb0af433f24e1b4d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/b7d7d90ee7df7f33a664b4aea32d50a305d35adb",
-                "reference": "b7d7d90ee7df7f33a664b4aea32d50a305d35adb",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/d64fbe1ef1fd12c812f6542abb0af433f24e1b4d",
+                "reference": "d64fbe1ef1fd12c812f6542abb0af433f24e1b4d",
                 "shasum": ""
             },
             "require": {
@@ -142,7 +98,7 @@
             ],
             "support": {
                 "issues": "https://github.com/phpseclib/phpseclib/issues",
-                "source": "https://github.com/phpseclib/phpseclib/tree/2.0.47"
+                "source": "https://github.com/phpseclib/phpseclib/tree/2.0"
             },
             "funding": [
                 {
@@ -158,16 +114,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-02-26T04:55:38+00:00"
+            "time": "2024-06-13T04:08:06+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": ">=5.3",
+        "ext-json": "*",
+        "ext-curl": "*"
+    },
     "platform-dev": [],
     "plugin-api-version": "2.6.0"
 }

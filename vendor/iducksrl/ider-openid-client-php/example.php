@@ -34,7 +34,6 @@ define('SCOPE', 'openid Xgox');
 $iderconnect = new IDEROpenIDClient(CLIENTID, SECRET, SCOPE);
 $iderconnect->authenticate();
 
-
 ?>
 
 <html>
