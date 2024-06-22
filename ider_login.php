@@ -24,11 +24,25 @@ jimport('joomla.plugin');
 require_once 'vendor/autoload.php';
 require_once 'includes/IDER_Server.php';
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\CMS\Uri\Uri;
+use IDERConnect\IDEROpenIDClient;
+
 /**
  * Plugin class for login/register via IDer service.
  */
 class PlgSystemIDer_Login extends JPlugin
 {
+    /**
+     * @var Joomla\CMS\Application\CMSApplication The application object.
+     */
+    protected $app;
+
+    /**
+     * @var Joomla\CMS\Uri\Uri The URI object.
+     */
+    protected $uri;
 
     protected $pluginSettings;
 
@@ -40,8 +54,10 @@ class PlgSystemIDer_Login extends JPlugin
         // construct the parent
         parent::__construct($subject, $config);
 
-        IDER_Server::instance();
+        $this->app = Factory::getApplication();
+        $this->uri = Uri::getInstance();
 
+        IDER_Server::instance();
     }
 
     /**
@@ -49,35 +65,28 @@ class PlgSystemIDer_Login extends JPlugin
      */
     public function onUserAfterDelete($user, $success, $msg){
         $userID = $user['id'];
+
         if($success){
             IDER_Callback::_delete_ider_data($userID);
         }
-
     }
-
 
     /**
      *  Event triggered after the route dispatching
      */
-    public function onAfterRoute()
+    public function onAfterInitialise()
     {
+        $user = Factory::getUser();
 
-        // Hack router
-        $uri = JUri::getInstance();
-
-        // I check if the user is not logged in
-        $user = JFactory::getUser();
-
-        if ($user->guest) {
-
-            if (preg_match('/\/(?:' . \IDERConnect\IDEROpenIDClient::$IDERButtonURL . '|' . \IDERConnect\IDEROpenIDClient::$IDERRedirectURL . ')(?!.)/', $uri->getPath())) {
-
-                IDER_Server::IDerOpenIdClientHandler();
-
-            }
-
+        if (
+            $this->app->isClient('site') &&
+            $user->guest &&
+            preg_match('/\/(?:' . IDEROpenIDClient::$IDERButtonURL . '|' . IDEROpenIDClient::$IDERRedirectURL . ')(?!.)/', $this->uri->getPath())
+        ) {
+            // Your handling code here
+            // Example: Redirect to a specific page or process the callback
+            IDER_Server::IDerOpenIdClientHandler();
         }
-
     }
 
     /**
