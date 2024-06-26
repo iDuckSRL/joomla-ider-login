@@ -1,6 +1,6 @@
-# Joomla 3.x IDer login
+# Joomla 4.x-5.x IDer login
 
-This plugin provides functionality to register and connect to your Joomla 3.x via IDer Service.
+This plugin provides functionality to register and connect to your Joomla 4.x-5.x via IDer Service.
 
 # How it works?
   1. First of all you need to create a profile in the [IDer](https://ider.com) website.
@@ -11,7 +11,7 @@ This plugin provides functionality to register and connect to your Joomla 3.x vi
 # Installation
 
 1. Download the plugin files (zip), and trough the admin dashboard upload the files into your Joomla 3.x installation.
-2. Enable the module through the 'Extension' page in Joomla 3.x.
+2. Enable the module through the 'Extension' page in Joomla 4.x.
 3. Go to the IDer Login configuration page.
 4. Configure the plugin as descripted. You need to create a profile in the [IDer](https://ider.com).
 5. With the data collected during the profile creation process fill in the Client ID, Client Secret and Campaign ID fields.
