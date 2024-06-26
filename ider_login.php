@@ -19,8 +19,6 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.plugin');
-
 require_once 'vendor/autoload.php';
 require_once 'includes/IDER_Server.php';
 
@@ -28,11 +26,15 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Uri\Uri;
 use IDERConnect\IDEROpenIDClient;
+use Joomla\CMS\Application\CMSApplication;
+use Joomla\Event\Event;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\Registry\Registry;
 
 /**
  * Plugin class for login/register via IDer service.
  */
-class PlgSystemIDer_Login extends JPlugin
+class PlgSystemIDer_Login extends CMSPlugin
 {
     /**
      * @var Joomla\CMS\Application\CMSApplication The application object.
@@ -94,35 +96,51 @@ class PlgSystemIDer_Login extends JPlugin
      */
     public function onBeforeRender()
     {
+        /** @var CMSApplication $app */
+        $app = Factory::getApplication();
 
+        /** @var HtmlDocument $doc */
+        $doc = $app->getDocument();
+        
         $isButtonEnabled = $this->params->get('ider_enable_in_login', false);
-        if (JFactory::getApplication()->isSite() && $isButtonEnabled) {
-            $doc = JFactory::getApplication()->getDocument();
-            ob_start();
 
-            $script = ob_get_contents();
-            ob_end_clean();
-            $doc->addScriptDeclaration($script);
+        if (Factory::getApplication()->isClient('site') && $isButtonEnabled) {
 
-            ob_start();
-            ?><a href="<?php echo JUri::base() . \IDERConnect\IDEROpenIDClient::$IDERButtonURL ?>"><button type="button" class="btn btn-danger ider-login-button">Login with IDer</button></a><?php
-            $html = ob_get_contents();
-            ob_end_clean();
-            $html = addcslashes($html, "'\"");
             $doc->addScriptDeclaration("
-				jQuery(document).ready(function($){
-					$('input[name=\"task\"][value=\"user.login\"], form[action*=\"task=user.login\"] > :first-child')
-					.closest('form').find('input[type=\"submit\"],button[type=\"submit\"]')
-					.after('" . $html . "');
-				});
-			");
+                document.addEventListener('DOMContentLoaded', () => {
+                    const newButton = document.createElement('div');
+                    newButton.innerText = 'Login with IDER';
+                    newButton.classList.add('ider-login-button');
+
+                    // Find the mod-login__submit button
+                    const submitButton = document.querySelector('.mod-login__submit');
+                    
+                    // Create a new anchor element and set its href attribute
+                    const anchor = document.createElement('a');
+                    anchor.href = '" . Uri::base() . \IDERConnect\IDEROpenIDClient::$IDERButtonURL . "';
+                    anchor.classList.add('ider-login-link');
+                    
+                    // Append the button to the anchor
+                    anchor.appendChild(newButton);
+
+                    // Insert the new button after the submit button
+                    submitButton.insertAdjacentElement('afterend', anchor);
+                });
+            ");
+
             $doc->addStyleDeclaration("
+                .ider-login-link {
+                    display: inline-block;
+                    text-decoration: none;
+                }
                 .ider-login-button {
+                    text-decoration: none;
+                    line-height: 40px;
                     text-shadow: 0 -1px 1px #006799, 1px 0 1px #006799, 0 1px 1px #006799, -1px 0 1px #006799!important;
                     border-color: #0073aa #006799 #006799!important;
                     box-shadow: 0 1px 0 #006799!important;
                     background: none!important;
-                    background: url(" . JURI::base() . "/plugins/system/ider_login/assets/images/ider_logo_white_256.png)!important;
+                    background: url(" . URI::base() . "/plugins/system/ider_login/assets/images/ider_logo_white_256.png)!important;
                     background-size: 50px!important;
                     background-repeat: no-repeat!important;
                     height: 50px!important;
@@ -138,7 +156,6 @@ class PlgSystemIDer_Login extends JPlugin
                 }
             ");
         }
-
     }
 
     /**
@@ -146,36 +163,40 @@ class PlgSystemIDer_Login extends JPlugin
      */
 
     // before_callback_handler
-    public function onIDerBeforeCallbackHandler($userInfo, $scopes)
+    public function onIDerBeforeCallbackHandler(Event $event)
     {
+        $scopes = $event->getArgument('openid_connect_scope');
 
+        // Perform your custom logic here
         $handled = false;
+
         if (in_array('yourscope', $scopes)) {
             // do something...
 
             // true will prevent further processing
             $handled = true;
         }
-        return $handled;
 
+        // Set the result in the event
+        $event->setArgument('result', $handled);
     }
-
+    
     // after_callback_handler
-    public function onIDerAfterCallbackHandler($userInfo, $scopes)
+    public function onIDerAfterCallbackHandler(Event $event)
     {
-
-        $app = JFactory::getApplication();
-        $pluginParams = new $this->params;
+        $plugin = PluginHelper::getPlugin('system', 'ider_login');
+        $pluginParams = new Registry($plugin->params);
+        
+        $scopes = $event->getArgument('scopes');
+        $scopes = $event->getArgument('openid_connect_scope');
 
         if(!empty($scopes)){
-
             if (in_array('yourscope', $scopes)) {
                 // do something...
             }
-
         }
 
-        $landingPages = $pluginParams->get('ider_campaigns_landing_pages');
+        $landingPages = $pluginParams->get('ider_campaigns_landing_pages', '');
 
         preg_match_all('/^(?!#)([\w-]+)=(.+)/m', $landingPages, $matches);
 
@@ -184,11 +205,10 @@ class PlgSystemIDer_Login extends JPlugin
         foreach ($landingPagesArray as $scope => $landingPage) {
             if (in_array($scope, $scopes)) {
 
-                $app->redirect($landingPage);
-                exit;
+                $this->app->redirect($landingPage);
 
+                exit;
             }
         }
-
     }
 }

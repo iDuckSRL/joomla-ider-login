@@ -19,84 +19,79 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\Event\Dispatcher;
+use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\Log\Log;
+use Joomla\CMS\User\User;
+use Joomla\CMS\Factory;
 use Joomla\Event\Event;
-
-jimport('joomla.plugin.helper');
-
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\Registry\Registry;
+use Joomla\CMS\String\PunycodeHelper;
 
 class IDER_Callback
 {
-
     static function handler($userInfo)
     {
-
-        // normalize the user info
         $userInfo = IDER_UserInfoManager::normalize($userInfo);
 
-        // I'll setup the event dispatcher and I'll trigger the event
-        $dispatcher = JEventDispatcher::getInstance();
+        $app = Factory::getApplication();
+        $dispatcher = $app->getDispatcher();
 
-        $iderBeforeCallback = $dispatcher->trigger('onIDerBeforeCallbackHandler', array($userInfo, $_SESSION['openid_connect_scope']));
+        $event = new Event(
+            'onIDerBeforeCallbackHandler',
+            array(
+                'userInfo' => $userInfo,
+                'openid_connect_scope' => $_SESSION['openid_connect_scope']
+            )
+        );
 
-        $handled = reset($iderBeforeCallback);
+        $dispatcher->dispatch($event->getName(), $event);
 
-        // if user function hadn't been exclusive let's resume the standard flow
-        if (!$handled) {
+        if (!$event->getArgument('result', false)) {
             self::defaultHandler($userInfo);
         }
-
     }
 
     // register or authenticate user
     static function defaultHandler($userInfo)
     {
-
-        $app = JFactory::getApplication();
+        /** @var CMSApplication $app */
+        $app = Factory::getApplication();
+        $dispatcher = $app->getDispatcher();
 
         // check if user exists by email
         $userID = self::getUserIdBy('email', $userInfo->email);
 
         if(empty($userID)){
-
             // check if user exists by sub
             $userID = self::getUserIdBySub($userInfo->sub);
-
         }
 
         if(empty($userID)) {
-
             $userID = self::_do_register($userInfo);
-
         }
 
-        $user = JFactory::getUser($userID);
+        $user = Factory::getUser($userID);
 
         if($user->guest) {
-
             self::_delete_ider_data($userID);
-            $userID = self::_do_register($userInfo);
-            $user = JFactory::getUser($userID);
 
+            $userID = self::_do_register($userInfo);
+            $user = Factory::getUser($userID);
         }
 
         // check for email changes
         if($user->email !== $userInfo->email){
-
             if(self::_local_mail_identical($user->id, $user->email)){
-
                 self::_update_user_mail($userID, $userInfo->email);
-
-            }else{
-
+            } else {
                 self::user_logout();
 
                 self::access_denied('Update the IDer email first!');
-
+                
+                /** @var CMSApplication $app */
                 $app->redirect('/');
-
             }
-
         }
 
         // Log the User In
@@ -104,33 +99,35 @@ class IDER_Callback
 
         self::_update_ider_table($userID, $userInfo);
 
+        $user = Factory::getUser();
+
         if(!$user->guest) {
+            $event = new Event(
+                'onIDerAfterCallbackHandler',
+                array(
+                    'userInfo' => $userInfo,
+                    'openid_connect_scope' => $_SESSION['openid_connect_scope']
+                )
+            );
 
-            $app = JFactory::getApplication('site');
+            $dispatcher->dispatch('onIDerAfterCallbackHandler', $event);
 
-            // I'll setup the event dispatcher and I'll trigger the event
-            // TODO: Update the event dispatching to JFactory::getApplication()->triggerEvent('eventName', array($options));
-            $dispatcher = JEventDispatcher::getInstance();
-
-            $iderAfterCallback = $dispatcher->trigger('onIDerAfterCallbackHandler', array($userInfo, $_SESSION['openid_connect_scope']));
-
-            $handled = reset($iderAfterCallback);
-
-            $plugin = JPluginHelper::getPlugin('system', 'ider_login');
-            $pluginParams = new JRegistry($plugin->params);
-
-            $iderRedirectUri = $pluginParams->get('ider_redirect_uri');
-
-            if(empty($iderRedirectUri)) {
-                $iderRedirectUri = '/';
+            if (!$event->getArgument('result', false)) {
+                $plugin = PluginHelper::getPlugin('system', 'ider_login');
+                $pluginParams = new Registry($plugin->params);
+    
+                $iderRedirectUri = $pluginParams->get('ider_redirect_uri');
+    
+                if(empty($iderRedirectUri)) {
+                    $iderRedirectUri = '/';
+                }
+    
+                /** @var CMSApplication $app */
+                $app->redirect($iderRedirectUri);
             }
-
-            $app->redirect($iderRedirectUri);
-
         }
 
         self::access_denied("User unable to login.");
-
     }
 
     /**
@@ -138,13 +135,14 @@ class IDER_Callback
      */
     static function access_denied($errormsg)
     {
+        /** @var CMSApplication $app */
+        $app = Factory::getApplication();
 
         if (is_null($errormsg)) {
             $errormsg = "Error authenticating user";
         }
 
-        JFactory::getApplication()->enqueueMessage(JText::_($errormsg), 'error');
-
+        $app->enqueueMessage($errormsg, Log::ERROR, 'application');
     }
 
     /**
@@ -152,48 +150,46 @@ class IDER_Callback
      */
     static function _delete_ider_data($userID)
     {
-
-        try{
-            $db = JFactory::getDbo();
+        try {
+            $db = Factory::getDbo();
             $query = $db->getQuery(true);
 
-            // delete all custom keys for user 1001.
+            // Prepare the delete query
             $conditions = array(
-                $db->quoteName('uid') . ' = ' . $userID,
+                $db->quoteName('uid') . ' = ' . $db->quote($userID),
             );
 
             $query->delete($db->quoteName('#__ider_user_data'));
             $query->where($conditions);
 
             $db->setQuery($query);
-
             $result = $db->execute();
-        }catch (RuntimeException $e) {
 
-        } finally{
             return true;
+        } catch (\RuntimeException $e) {
+            self::access_denied($e->getMessage());
         }
 
         return false;
-
     }
 
     /**
-     * Logout the user
+     * Logout the user.
      */
     static function user_logout()
     {
-
-        $app = JFactory::getApplication();
-        $user = JFactory::getUser();
+        $user = Factory::getUser();
 
         if(!$user->guest){
-            $userID = $user->get('id');
-            $app->logout($userID, array());
-            @session_destroy();
-            @session_start();
+            // Perform logout
+            $session = Factory::getSession();
+            $session->expire();
+            $user->logout();
+            
+            // Destroy session
+            $session->destroy();
+            $session->start();
         }
-
     }
 
     /**
@@ -201,156 +197,112 @@ class IDER_Callback
      */
     private static function _update_ider_table($userID, $userInfo)
     {
+        $db = Factory::getDbo();
+        $query = $db->getQuery(true);
+        $query->select('*')
+            ->from($db->quoteName('#__ider_user_data'))
+            ->where($db->quoteName('uid') . ' = ' . (int) $userID);
+
+        $db->setQuery($query);
+        $results = $db->loadAssocList(); // Load results as an associative array
+
+        $existingFields = [];
+        foreach ($results as $result) {
+            $existingFields[$result['user_field']] = $result;
+        }
 
         foreach ($userInfo as $key => $value) {
-
             try {
-
-                $db = JFactory::getDbo();
-
-                $query = $db->getQuery(true);
-                $query->select('*')
-                    ->from($db->quoteName('#__ider_user_data'))
-                    ->where($db->quoteName('uid') . ' = '. $userID)
-                    ->where($db->quoteName('user_field') . ' = '. $db->quote($key));
-
-                $db->setQuery($query);
-
-                $result = $db->loadResult();
-
-                if(!empty($result)) {
-                    // Update data
-
-                    // Create an object for the record we are going to update.
-                    $data = new stdClass();
-
-                    // Must be a valid primary key value.
-                    $data->uid = $userID;
-                    $data->user_field = $key;
-                    $data->user_value = $value;
-
-                    // Update their details in the users table using id as the primary key.
-                    $result = JFactory::getDbo()->updateObject('#__ider_user_data', $data, array('uid', 'user_field'));
-
-                }else{
-                    // insert data
-
+                if (!array_key_exists($key, $existingFields)) {
+                    // Insert data
                     // Create and populate an object.
                     $data = new stdClass();
                     $data->uid = $userID;
                     $data->user_field = $key;
                     $data->user_value = $value;
-
-                    // Insert the object into the user profile table.
-                    $result = JFactory::getDbo()->insertObject('#__ider_user_data', $data);
-
+            
+                    $result = $db->insertObject('#__ider_user_data', $data);
+                } else {
+                    // Update data
+                    // Create an object for the record we are going to update.
+                    $data = new stdClass();
+                    $data->uid = $userID;
+                    $data->user_field = $key;
+                    $data->user_value = $value;
+            
+                    // Update their details in the users table using uid and user_field as primary keys.
+                    $result = $db->updateObject('#__ider_user_data', $data, ['uid', 'user_field']);
                 }
-
-            }catch (RuntimeException $e){
-
+            } catch (\RuntimeException $e) {
                 self::access_denied($e->getMessage());
-
             }
-
         }
-
     }
 
     /**
-     * Register an user
+     * Register an user.
      */
     private static function _do_register($userInfo)
     {
+        $plugin = PluginHelper::getPlugin('system', 'ider_login');
+        $pluginParams = new Registry($plugin->params);
 
-        jimport('joomla.user.helper');
-
-        // format key=>iderdata value=>joomla field
-        $fieldMapping = array(
-            'field' => 'correspondentant field'
-        );
+        // Format key=>iderdata value=>joomla field
+        $fieldMapping = [
+            'field' => 'corresponding field'
+        ];
         
         $randomPassword = substr(md5($userInfo->email), 0, 12);
 
         $data = array(
             'name' => $userInfo->family_name . ' ' . $userInfo->given_name,
             'username' => $userInfo->email,
-            'email1' => $userInfo->email,
-            'email2' => $userInfo->email,
-            'password1' => $randomPassword,
-            'password2' => $randomPassword,
+            'email' => $userInfo->email,
+            'block' => $pluginParams->get('ider_register_as_enabled') ? 0 : 1,
+            'activation' => $pluginParams->get('ider_register_as_activated') ? '' : PunycodeHelper::getRandom(10),
+            'password' => $randomPassword
         );
 
-        JFactory::getLanguage()->load('com_users');
-        JModelLegacy::addIncludePath(JPATH_ROOT . '/components/com_users/models');
+        $user = new User;
 
-        $model = JModelLegacy::getInstance('Registration', 'UsersModel');
-        $user = $model->register($data);
-
-        $return = null;
-
-        if($user == 'useractivate') {
-
-            $plugin = JPluginHelper::getPlugin('system', 'ider_login');
-            $pluginParams = new JRegistry($plugin->params);
-
-            $return = self::getUserIdBy('email', $userInfo->email);
-            $user = JFactory::getUser($return);
-
-            if($pluginParams->get('ider_register_as_enabled')) {
-                $user->set('block', '0');
-            }
-
-            if($pluginParams->get('ider_register_as_activated')) {
-                $user->set('activation', '');
-            }
-
-            $user->save();
-
+        if (!$user->bind($data)) {
+            return;
+        }
+    
+        if (!$user->save()) {
+            return;
         }
 
-        // destroy eventual login sessions
+        // Destroy eventual login sessions
         self::user_logout();
-
-        return $return;
-
+        
+        return $user->id;
     }
 
     /**
-     * Login an user by its ID
+     * Login an user by its ID.
      */
     private static function _login($userID)
     {
+        /** @var CMSApplication $app */
+        $app = Factory::getApplication();
+        $user = Factory::getUser();
+        $session = Factory::getSession();
 
-        $results = false;
+        if ($user->guest) {
+            $user = Factory::getUser($userID);
 
-        $loggedUser = JFactory::getUser();
+            if (!$user->guest && $user->id) {
+                $session->set('user', $user);
 
-        if($loggedUser->guest) {
-            try{
-
-                $db = JFactory::getDbo();
-                $query = $db->getQuery(true)
-                    ->select('*')
-                    ->from($db->quoteName('#__users'))
-                    ->where($db->quoteName('id') . '=' . $userID);
-                $user = $db->setQuery($query, 0, 1)->loadAssoc();
-
-                JPluginHelper::importPlugin('user');
-                $dispatcher = JDispatcher::getInstance();
-
-                // Initiate log in
-                $options = array('action' => 'core.login.site', 'remember' => false);
-                $results = $dispatcher->trigger('onUserLogin', array($user, $options));
-
-            }catch (RuntimeException $e) {
-                self::access_denied($e->getMessage());
+                $user->setLastVisit();
+                $app->checkSession();
+                
+                return true;
             }
-
-
         }
 
-        return $results;
-
+        return false;
     }
 
     /**
@@ -358,112 +310,113 @@ class IDER_Callback
      */
     private static function _local_mail_identical($userID, $userMail)
     {
-        $areIdentical = true;
+        $areIdentical = false;
 
-        try{
-            // Initialise some variables
-            $db = JFactory::getDbo();
+        try {
+            $db = Factory::getDbo();
+            
             $query = $db->getQuery(true)
                 ->select($db->quoteName('id'))
                 ->from($db->quoteName('#__ider_user_data'))
-                ->where($db->quoteName('uid') . ' = ' . $userID)
+                ->where($db->quoteName('uid') . ' = ' . $db->quote($userID))
                 ->where($db->quoteName('user_field') . ' = ' . $db->quote('email'))
                 ->where($db->quoteName('user_value') . ' = ' . $db->quote($userMail));
 
             $db->setQuery($query);
-            $db->execute();
-            $result = $db->getNumRows();
+            $result = $db->loadResult();
 
-            if(!$result){
-                $areIdentical = false;
+            if ($result) {
+                $areIdentical = true;
             }
-
-        }catch (RuntimeException $e) {
-            $areIdentical = false;
+        } catch (\RuntimeException $e) {
             self::access_denied($e->getMessage());
         }
 
-
         return $areIdentical;
-
     }
 
     /**
-     * Update the old mail with a new one
+     * Update the old mail with a new one.
      */
     private static function _update_user_mail($userID, $email)
     {
+        try {
+            $db = Factory::getDbo();
 
-        try{
-            $db = JFactory::getDbo();
             $query = $db->getQuery(true);
-            $fields = array(
+            
+            // Prepare the fields to be updated
+            $fields = [
                 $db->quoteName('email') . ' = ' . $db->quote($email)
-            );
-            $conditions = array($db->quoteName('id') . ' = ' . $userID);
-            $query = $db->getQuery(true);
-            $query->update('#__users')->set($fields)->where($conditions);
+            ];
+            
+            // Prepare the conditions for the update
+            $conditions = [
+                $db->quoteName('id') . ' = ' . $db->quote($userID)
+            ];
+            
+            // Construct the update query
+            $query->update($db->quoteName('#__users'))
+                ->set($fields)
+                ->where($conditions);
+            
+            // Set and execute the query
             $db->setQuery($query);
             $db->execute();
-        }catch (RuntimeException $e){
+        } catch (\RuntimeException $e) {
             self::access_denied($e->getMessage());
         }
-
     }
 
     /**
-     *  Fetch user ID by using a custom field
+     *  Fetch user ID by using a custom field.
      */
     private static function getUserIdBy($field, $value) {
-
-        try{
+        try {
             // Initialise some variables
-            $db = JFactory::getDbo();
+            $db = Factory::getDbo();
+
             $query = $db->getQuery(true)
                 ->select($db->quoteName('id'))
                 ->from($db->quoteName('#__users'))
                 ->where($db->quoteName($field) . ' = ' . $db->quote($value));
+
             $db->setQuery($query);
-        }catch(RuntimeException $e) {
+        } catch (RuntimeException $e) {
             self::access_denied($e->getMessage());
         }
 
         return $db->loadResult();
-
     }
 
-
     /**
-     *  Fetch user ID by using a custom field
+     *  Fetch user ID by using the sub.
      */
     private static function getUserIdBySub($iderSub) {
-
-        try{
+        try {
             // Initialise some variables
-            $db = JFactory::getDbo();
-            $query = $db->getQuery(true);
-            $query
-                ->select(array('uid'))
+            $db = Factory::getDbo();
+
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('uid'))
                 ->from($db->quoteName('#__ider_user_data'))
                 ->where($db->quoteName('user_field') . ' = ' . $db->quote('sub'))
                 ->where($db->quoteName('user_value') . ' = ' . $db->quote($iderSub));
 
+
+            $result = false;
+    
             $result = false;
             $db->setQuery($query);
-            $db->execute();
-
             $result = $db->loadResult();
-
-            if($db->getNumRows() > 0) {
-                return $result; // If it fails, it will throw a RuntimeException
+    
+            if ($result) {
+                return $result;
             }
-
-        }catch(RuntimeException $e) {
+        } catch (RuntimeException $e) {
             self::access_denied($e->getMessage());
         }
-
-        return $result;
-
+    
+        return false;
     }
-
 }

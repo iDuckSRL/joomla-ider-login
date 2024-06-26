@@ -19,9 +19,13 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Uri\Uri;
+use Joomla\Registry\Registry;
+
 class IDER_Server
 {
-
     /** Server Instance */
     public static $_instance = null;
 
@@ -39,19 +43,16 @@ class IDER_Server
         'campaigns_landing_pages' => ''
     );
 
-
     function __construct()
     {
         self::init();
     }
-
 
     static function init()
     {
         spl_autoload_register(array(__CLASS__, 'autoloader'));
 
         self::includes();
-
     }
 
     /**
@@ -59,29 +60,31 @@ class IDER_Server
      */
     public static function getIDerOpenIdClientIstance()
     {
-
-        $plugin = JPluginHelper::getPlugin('system', 'ider_login');
-        $pluginParams = new JRegistry($plugin->params);
+        $plugin = PluginHelper::getPlugin('system', 'ider_login');
+        $pluginParams = new Registry($plugin->params);
 
         \IDERConnect\IDEROpenIDClient::$IDERLogFile = JPATH_PLUGINS . '/system/ider_login/log/ider-connect.log';
 
         // Override the base URL with the WP one.
-        \IDERConnect\IDEROpenIDClient::$BaseUrl = JURI::base();
+        \IDERConnect\IDEROpenIDClient::$BaseUrl = Uri::getInstance()->base();
 
         if (is_null(\IDERConnect\IDEROpenIDClient::$_instance)) {
-            \IDERConnect\IDEROpenIDClient::$_instance = new \IDERConnect\IDEROpenIDClient($pluginParams->get('ider_client_id', ''), $pluginParams->get('ider_client_secret', ''), $pluginParams->get('ider_scope_name', ''));
+            \IDERConnect\IDEROpenIDClient::$_instance = new \IDERConnect\IDEROpenIDClient(
+                $pluginParams->get('ider_client_id', ''),
+                $pluginParams->get('ider_client_secret', ''),
+                $pluginParams->get('ider_scope_name', '')
+            );
         }
 
         return \IDERConnect\IDEROpenIDClient::$_instance;
     }
 
-
     public static function IDerOpenIdClientHandler()
     {
-        $jinput = JFactory::getApplication()->input;
-        $scope = $jinput->get('scope', '');
-        try {
+        $input = Factory::getApplication()->input;
+        $scope = $input->get('scope', '');
 
+        try {
             $iderconnect = IDER_Server::getIDerOpenIdClientIstance();
 
             if (!empty($scope)) {
@@ -92,16 +95,13 @@ class IDER_Server
 
             $userInfo = $iderconnect->requestUserInfo();
 
-            // I'll call the IDer handler
             IDER_Callback::handler($userInfo);
-
         } catch (Exception $e) {
             IDER_Callback::access_denied($e->getMessage());
         } finally {
             exit;
         }
     }
-
 
     /**
      * populate the instance if the plugin for extendability
@@ -129,7 +129,6 @@ class IDER_Server
         require 'IDER_Callback.php';
         require 'IDER_Helpers.php';
         require 'IDER_UserInfoManager.php';
-
     }
 
     private static function autoloader($class)
@@ -172,4 +171,3 @@ class IDER_Server
     }
 
 }
-

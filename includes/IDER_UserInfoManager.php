@@ -25,8 +25,6 @@ defined('_JEXEC') or die;
 
 class IDER_UserInfoManager
 {
-
-
     static function normalize($user_info)
     {
         $user_info = (array)$user_info;
@@ -41,7 +39,6 @@ class IDER_UserInfoManager
 
     private static function _checkJsonfields($userdata)
     {
-
         foreach ($userdata as $key => $claim) {
             if (IDER_Helpers::isJSON($claim)) {
                 $subclaims = json_decode($claim);
@@ -58,6 +55,4 @@ class IDER_UserInfoManager
 
         return $userdata;
     }
-
-
 }
