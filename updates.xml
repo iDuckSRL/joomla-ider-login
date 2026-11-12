@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<updates>
+    <update>
+        <name>System - IDer Login</name>
+        <description>IDer Login for Joomla</description>
+        <element>iderlogin</element>
+        <type>plugin</type>
+        <folder>system</folder>
+        <client>site</client>
+        <version>1.0.1</version>
+        <infourl title="IDer Login 1.0.1">https://github.com/iDuckSRL/joomla-ider-login/releases/tag/v1.0.1</infourl>
+        <downloads>
+            <downloadurl type="full" format="zip">https://github.com/iDuckSRL/joomla-ider-login/releases/download/v1.0.1/plg_system_iderlogin-1.0.1.zip</downloadurl>
+        </downloads>
+        <sha256>1abad21cd4dec1735355d142bbcfefafbfa2cb931f55bacb400f8d54718c7b95</sha256>
+        <changelogurl>https://raw.githubusercontent.com/iDuckSRL/joomla-ider-login/main/changelog.xml</changelogurl>
+        <maintainer>IDer</maintainer>
+        <maintainerurl>https://www.ider.com</maintainerurl>
+        <targetplatform name="joomla" version="(5|6)\..*"/>
+        <php_minimum>8.1</php_minimum>
+    </update>
+</updates>
