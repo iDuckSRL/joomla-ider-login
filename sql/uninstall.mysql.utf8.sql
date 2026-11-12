@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS `#__ider_user_data`;
+DROP TABLE IF EXISTS `#__iderlogin_users`;

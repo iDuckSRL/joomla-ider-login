@@ -1,12 +1,12 @@
-DROP TABLE IF EXISTS `#__ider_user_data`;
-
-CREATE TABLE `#__ider_user_data` (
-	`id`       INT(11)     NOT NULL AUTO_INCREMENT,
-	`uid`      INT(11)     NOT NULL,
-	`user_field` VARCHAR(255) NOT NULL,
-	`user_value` VARCHAR(255) NOT NULL,
-	PRIMARY KEY (`id`)
-)
-	ENGINE =MyISAM
-	AUTO_INCREMENT =0
-	DEFAULT CHARSET =utf8
+CREATE TABLE IF NOT EXISTS `#__iderlogin_users` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `sub` varchar(191) NOT NULL,
+  `user_id` int NOT NULL,
+  `claims` mediumtext,
+  `updated_fields` text,
+  `created` datetime NOT NULL,
+  `last_login` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_sub` (`sub`),
+  KEY `idx_user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" group="system" method="upgrade">
+    <name>plg_system_iderlogin</name>
+    <author>IDer</author>
+    <creationDate>2026-11</creationDate>
+    <copyright>(C) IDer</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <authorEmail>plugins@jlm.srl</authorEmail>
+    <authorUrl>https://www.ider.com</authorUrl>
+    <version>1.0.0</version>
+    <description>PLG_SYSTEM_IDERLOGIN_XML_DESCRIPTION</description>
+    <namespace path="src">IDer\Plugin\System\IderLogin</namespace>
+    <files>
+        <folder plugin="iderlogin">services</folder>
+        <folder>src</folder>
+        <folder>sql</folder>
+    </files>
+    <media destination="plg_system_iderlogin" folder="media">
+        <folder>css</folder>
+        <folder>js</folder>
+        <folder>images</folder>
+    </media>
+    <languages folder="language">
+        <language tag="en-GB">en-GB/plg_system_iderlogin.ini</language>
+        <language tag="en-GB">en-GB/plg_system_iderlogin.sys.ini</language>
+        <language tag="it-IT">it-IT/plg_system_iderlogin.ini</language>
+        <language tag="it-IT">it-IT/plg_system_iderlogin.sys.ini</language>
+    </languages>
+    <install>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+        </sql>
+    </install>
+    <uninstall>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+        </sql>
+    </uninstall>
+    <update>
+        <schemas>
+            <schemapath type="mysql">sql/updates/mysql</schemapath>
+        </schemas>
+    </update>
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field name="callback_note" type="note" class="alert alert-info" label="PLG_SYSTEM_IDERLOGIN_SETUP_LABEL" description="PLG_SYSTEM_IDERLOGIN_SETUP_DESC"/>
+                <field name="client_id" type="text" label="PLG_SYSTEM_IDERLOGIN_CLIENT_ID_LABEL" description="PLG_SYSTEM_IDERLOGIN_CLIENT_ID_DESC" filter="string" required="true"/>
+                <field name="client_secret" type="password" label="PLG_SYSTEM_IDERLOGIN_CLIENT_SECRET_LABEL" description="PLG_SYSTEM_IDERLOGIN_CLIENT_SECRET_DESC" filter="raw" required="true" autocomplete="off"/>
+                <field name="scope" type="text" label="PLG_SYSTEM_IDERLOGIN_SCOPE_LABEL" description="PLG_SYSTEM_IDERLOGIN_SCOPE_DESC" filter="string" required="true"/>
+                <field name="allow_registration" type="radio" layout="joomla.form.field.radio.switcher" default="1" label="PLG_SYSTEM_IDERLOGIN_ALLOW_REGISTRATION_LABEL" description="PLG_SYSTEM_IDERLOGIN_ALLOW_REGISTRATION_DESC">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field name="update_data" type="radio" layout="joomla.form.field.radio.switcher" default="1" label="PLG_SYSTEM_IDERLOGIN_UPDATE_DATA_LABEL" description="PLG_SYSTEM_IDERLOGIN_UPDATE_DATA_DESC">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field name="allow_backend_users" type="radio" layout="joomla.form.field.radio.switcher" default="0" label="PLG_SYSTEM_IDERLOGIN_ALLOW_BACKEND_LABEL" description="PLG_SYSTEM_IDERLOGIN_ALLOW_BACKEND_DESC">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field name="redirect_url" type="url" label="PLG_SYSTEM_IDERLOGIN_REDIRECT_LABEL" description="PLG_SYSTEM_IDERLOGIN_REDIRECT_DESC" filter="url" validate="url" relative="true"/>
+                <field name="landing_pages" type="textarea" rows="4" label="PLG_SYSTEM_IDERLOGIN_LANDING_LABEL" description="PLG_SYSTEM_IDERLOGIN_LANDING_DESC" filter="string"/>
+            </fieldset>
+        </fields>
+    </config>
+</extension>

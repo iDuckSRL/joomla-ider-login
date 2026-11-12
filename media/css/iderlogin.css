@@ -1,0 +1,26 @@
+/* IDer Login: pulsante "Accedi con IDer" */
+.plg_system_iderlogin_button.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .55rem;
+  min-height: 44px;
+  background: #1a4e80;
+  border-color: #1a4e80;
+  color: #fff;
+  font-weight: 600;
+}
+.plg_system_iderlogin_button.btn:hover,
+.plg_system_iderlogin_button.btn:focus {
+  background: #123a61;
+  border-color: #123a61;
+  color: #fff;
+}
+.plg_system_iderlogin_button.btn:focus-visible {
+  outline: 3px solid #7db3e8;
+  outline-offset: 2px;
+}
+.plg_system_iderlogin_button .icon {
+  width: 20px;
+  height: 20px;
+}
