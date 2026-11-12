@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<changelogs>
+    <changelog>
+        <element>iderlogin</element>
+        <type>plugin</type>
+        <version>1.0.1</version>
+        <addition>
+            <item>Update server: Joomla now shows new versions of the plugin in System → Update → Extensions.</item>
+        </addition>
+    </changelog>
+    <changelog>
+        <element>iderlogin</element>
+        <type>plugin</type>
+        <version>1.0.0</version>
+        <addition>
+            <item>First release for Joomla 5 and 6: "Sign in with IDer" button, automatic accounts, profile data, landing pages by scope.</item>
+        </addition>
+    </changelog>
+</changelogs>
